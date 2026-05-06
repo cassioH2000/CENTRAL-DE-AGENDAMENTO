@@ -448,7 +448,7 @@ margin-top:15px;
 <div>
 
 <div class="horario">
-${item.horario}
+${item.horario.slice(0,5)}
 </div>
 
 <div class="paciente">
@@ -465,6 +465,7 @@ ${item.paciente}
 
 </div>
 
+```html id="7k4y8w"
 <div class="info">
 
 <div>
@@ -478,11 +479,32 @@ ${item.acompanhante || 'Sem acompanhante'}
 </div>
 
 <div>
+<strong>CPF Acompanhante</strong><br>
+${item.cpf_acompanhante || '-'}
+</div>
+
+<div>
+<strong>Procedimento</strong><br>
+${item.procedimento}
+</div>
+
+<div>
+<strong>Local</strong><br>
+${item.local_atendimento}
+</div>
+
+<div>
 <strong>Telefone</strong><br>
 ${item.telefone}
 </div>
 
+<div>
+<strong>Data</strong><br>
+${item.data}
 </div>
+
+</div>
+```
 
 <div class="botoes">
 
