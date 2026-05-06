@@ -353,14 +353,15 @@ async function carregarAgendamentos(){
             conteudoPacientes += `
 
 <div style="
-background:#111;
-color:white;
-padding:15px;
-border-radius:14px;
+background:#ffffff;
+color:#111;
+padding:18px;
+border-radius:16px;
 margin-top:20px;
 margin-bottom:15px;
+border:2px solid #e5e7eb;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
 ">
-
 <div
 onclick="toggleData('cidade-${data.replaceAll('-','')}-${cidade}')"
 style="
@@ -436,7 +437,11 @@ cidadesAgrupadas[cidade].forEach(item=>{
 
 conteudoPacientes += `
 
-<div class="item">
+<div class="item" style="
+background:#f8fafc;
+border-left:5px solid #1f8bff;
+margin-top:15px;
+">
 
 <div class="item-topo">
 
