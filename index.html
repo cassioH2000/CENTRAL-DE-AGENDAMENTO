@@ -289,6 +289,7 @@ async function salvarAgendamento(){
 
     alert("Agendamento salvo!");
 
+   
     carregarAgendamentos();
 
 }
@@ -514,6 +515,19 @@ onclick="editarPaciente(${item.id})">
 </button>
 
 <button
+style="
+background:#198754;
+color:white;
+"
+onclick="gerarPDFHospedagem(${item.id})">
+
+🏨 Hospedagem
+
+</button>
+
+
+
+<button
 class="btn-excluir"
 onclick="excluirPaciente(${item.id})">
 🗑 Excluir
@@ -715,7 +729,61 @@ startY:50
 doc.save(`Pacientes-${cidade}-${data}.pdf`);
 
 }
+async function gerarPDFHospedagem(id){
 
+    const { data:item, error } = await supabaseClient
+    .from('agendamentos')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+    if(error){
+
+        console.log(error);
+
+        alert("Erro ao gerar PDF");
+
+        return;
+
+    }
+
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(22);
+
+    doc.text("HOSPEDAGEM", 70, 20);
+
+    doc.setFontSize(14);
+
+    doc.text(`Nome do Paciente: ${item.paciente}`, 14, 45);
+
+    doc.text(`CPF: ${item.cpf_paciente}`, 14, 60);
+
+    doc.text(`Telefone: ${item.telefone}`, 14, 75);
+
+    doc.text(
+        `Acompanhante: ${item.acompanhante || 'Sem acompanhante'}`,
+        14,
+        90
+    );
+
+    doc.line(14, 120, 90, 120);
+
+    doc.text("Data de Chegada", 14, 128);
+
+    doc.line(110, 120, 190, 120);
+
+    doc.text("Data de Saída", 120, 128);
+
+    doc.line(40, 200, 170, 200);
+
+    doc.text("Assinatura do Paciente", 70, 210);
+
+    doc.save(`Hospedagem-${item.paciente}.pdf`);
+
+}
 carregarAgendamentos();
 
 </script>
