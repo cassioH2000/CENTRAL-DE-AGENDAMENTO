@@ -454,158 +454,184 @@ async function carregarAgendamentos(){
 
     Object.keys(agrupados).forEach(data=>{
 
-        listaDatas.innerHTML += `
+        const pacientes = agrupados[data];
 
-        <div class="pasta" onclick="abrirData('${data}')">
+        const cidadesAgrupadas = {};
 
-            <h3>📁 ${data}</h3>
+        pacientes.forEach(item=>{
 
-            <p>
-                ${agrupados[data].length} pacientes
-            </p>
+            if(!cidadesAgrupadas[item.cidade]){
 
-        </div>
+                cidadesAgrupadas[item.cidade] = [];
 
-        `;
+            }
 
-    });
+            cidadesAgrupadas[item.cidade].push(item);
 
-    window.agendamentosAgrupados = agrupados;
+        });
 
-}
+        let conteudoPacientes = '';
 
-function abrirData(data){
+        Object.keys(cidadesAgrupadas).forEach(cidade=>{
 
-    const lista = document.getElementById('lista');
+            conteudoPacientes += `
 
-    lista.innerHTML = '';
+            <div style="
+            background:#111;
+            color:white;
+            padding:15px;
+            border-radius:14px;
+            margin-top:20px;
+            margin-bottom:15px;
+            ">
 
-    const pacientes = window.agendamentosAgrupados[data];
+                <h2>📁 ${cidade}</h2>
 
-    const cidadesAgrupadas = {};
-
-    pacientes.forEach(item=>{
-
-        if(!cidadesAgrupadas[item.cidade]){
-
-            cidadesAgrupadas[item.cidade] = [];
-
-        }
-
-        cidadesAgrupadas[item.cidade].push(item);
-
-    });
-
-    Object.keys(cidadesAgrupadas).forEach(cidade=>{
-
-        lista.innerHTML += `
-
-        <div style="
-        background:#111;
-        color:white;
-        padding:15px;
-        border-radius:14px;
-        margin-top:20px;
-        margin-bottom:15px;
-        ">
-
-            <h2>
-            📁 ${cidade}
-            </h2>
-
-            <p>
-            ${cidadesAgrupadas[cidade].length} pacientes
-            </p>
-
-        </div>
-
-        `;
-
-        cidadesAgrupadas[cidade].forEach(item=>{
-
-            lista.innerHTML += `
-
-            <div class="item">
-
-                <div class="item-topo">
-
-                    <div>
-
-                        <div class="horario">
-                            ${item.horario}
-                        </div>
-
-                        <div class="paciente">
-                            ${item.paciente}
-                        </div>
-
-                    </div>
-
-                    <div>
-
-                        <strong>${item.cidade}</strong>
-
-                    </div>
-
-                </div>
-
-                <div class="info">
-
-                    <div>
-                        <strong>CPF Paciente</strong><br>
-                        ${item.cpf_paciente}
-                    </div>
-
-                    <div>
-                        <strong>Acompanhante</strong><br>
-                        ${item.acompanhante || 'Sem acompanhante'}
-                    </div>
-
-                    <div>
-                        <strong>CPF Acompanhante</strong><br>
-                        ${item.cpf_acompanhante || '-'}
-                    </div>
-
-                    <div>
-                        <strong>Procedimento</strong><br>
-                        ${item.procedimento}
-                    </div>
-
-                    <div>
-                        <strong>Local</strong><br>
-                        ${item.local_atendimento}
-                    </div>
-
-                    <div>
-                        <strong>Telefone</strong><br>
-                        ${item.telefone}
-                    </div>
-
-                </div>
-
-                <div class="botoes">
-
-                    <button
-                    class="btn-editar"
-                    onclick="editarPaciente(${item.id})">
-                        ✏️ Editar
-                    </button>
-
-                    <button
-                    class="btn-excluir"
-                    onclick="excluirPaciente(${item.id})">
-                        🗑 Excluir
-                    </button>
-
-                </div>
+                <p>
+                ${cidadesAgrupadas[cidade].length} pacientes
+                </p>
 
             </div>
 
             `;
 
+            cidadesAgrupadas[cidade].forEach(item=>{
+
+                conteudoPacientes += `
+
+                <div class="item">
+
+                    <div class="item-topo">
+
+                        <div>
+
+                            <div class="horario">
+                                ${item.horario}
+                            </div>
+
+                            <div class="paciente">
+                                ${item.paciente}
+                            </div>
+
+                        </div>
+
+                        <div>
+
+                            <strong>${item.cidade}</strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="info">
+
+                        <div>
+                            <strong>CPF Paciente</strong><br>
+                            ${item.cpf_paciente}
+                        </div>
+
+                        <div>
+                            <strong>Acompanhante</strong><br>
+                            ${item.acompanhante || 'Sem acompanhante'}
+                        </div>
+
+                        <div>
+                            <strong>CPF Acompanhante</strong><br>
+                            ${item.cpf_acompanhante || '-'}
+                        </div>
+
+                        <div>
+                            <strong>Procedimento</strong><br>
+                            ${item.procedimento}
+                        </div>
+
+                        <div>
+                            <strong>Local</strong><br>
+                            ${item.local_atendimento}
+                        </div>
+
+                        <div>
+                            <strong>Telefone</strong><br>
+                            ${item.telefone}
+                        </div>
+
+                    </div>
+
+                    <div class="botoes">
+
+                        <button
+                        class="btn-editar"
+                        onclick="editarPaciente(${item.id})">
+                            ✏️ Editar
+                        </button>
+
+                        <button
+                        class="btn-excluir"
+                        onclick="excluirPaciente(${item.id})">
+                            🗑 Excluir
+                        </button>
+
+                    </div>
+
+                </div>
+
+                `;
+
+            });
+
         });
 
+        listaDatas.innerHTML += `
+
+        <div class="pasta">
+
+            <div
+            onclick="toggleData('conteudo-${data}')"
+            style="
+            cursor:pointer;
+            ">
+
+                <h3>
+                📁 ${data}
+                </h3>
+
+                <p>
+                ${pacientes.length} pacientes
+                </p>
+
+            </div>
+
+            <div
+            id="conteudo-${data}"
+            style="
+            display:none;
+            margin-top:20px;
+            ">
+
+                ${conteudoPacientes}
+
+            </div>
+
+        </div>
+
+        `;
+
     });
+
+}
+function toggleData(id){
+
+    const elemento = document.getElementById(id);
+
+    if(elemento.style.display === 'none'){
+
+        elemento.style.display = 'block';
+
+    }else{
+
+        elemento.style.display = 'none';
+
+    }
 
 }
 async function excluirPaciente(id){
