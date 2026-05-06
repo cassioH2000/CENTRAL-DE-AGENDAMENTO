@@ -693,17 +693,114 @@ async function excluirPaciente(id){
 
 async function editarPaciente(id){
 
-    const novoNome = prompt(
-        "Digite o novo nome do paciente:"
+    const { data:paciente, error:erroBusca } = await supabaseClient
+    .from('agendamentos')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+    if(erroBusca){
+
+        console.log(erroBusca);
+
+        alert("Erro ao buscar paciente");
+        return;
+
+    }
+
+    const novoPaciente = prompt(
+        "Nome do Paciente:",
+        paciente.paciente
     );
 
-    if(!novoNome) return;
+    if(novoPaciente === null) return;
+
+    const novoCpfPaciente = prompt(
+        "CPF do Paciente:",
+        paciente.cpf_paciente
+    );
+
+    if(novoCpfPaciente === null) return;
+
+    const novoAcompanhante = prompt(
+        "Nome do Acompanhante:",
+        paciente.acompanhante || ''
+    );
+
+    if(novoAcompanhante === null) return;
+
+    const novoCpfAcompanhante = prompt(
+        "CPF do Acompanhante:",
+        paciente.cpf_acompanhante || ''
+    );
+
+    if(novoCpfAcompanhante === null) return;
+
+    const novoProcedimento = prompt(
+        "Procedimento:",
+        paciente.procedimento
+    );
+
+    if(novoProcedimento === null) return;
+
+    const novaCidade = prompt(
+        "Cidade:",
+        paciente.cidade
+    );
+
+    if(novaCidade === null) return;
+
+    const novoLocal = prompt(
+        "Local de Atendimento:",
+        paciente.local_atendimento
+    );
+
+    if(novoLocal === null) return;
+
+    const novaData = prompt(
+        "Data:",
+        paciente.data
+    );
+
+    if(novaData === null) return;
+
+    const novoHorario = prompt(
+        "Horário:",
+        paciente.horario
+    );
+
+    if(novoHorario === null) return;
+
+    const novoTelefone = prompt(
+        "Telefone:",
+        paciente.telefone
+    );
+
+    if(novoTelefone === null) return;
 
     const { error } = await supabaseClient
     .from('agendamentos')
     .update({
 
-        paciente:novoNome
+        paciente:novoPaciente,
+
+        cpf_paciente:novoCpfPaciente,
+
+        acompanhante:novoAcompanhante,
+
+        cpf_acompanhante:novoCpfAcompanhante,
+
+        procedimento:novoProcedimento,
+
+        cidade:novaCidade.trim(),
+
+        local_atendimento:novoLocal,
+
+        data:novaData,
+
+        horario:novoHorario,
+
+        telefone:novoTelefone
 
     })
     .eq('id', id);
@@ -713,6 +810,7 @@ async function editarPaciente(id){
         console.log(error);
 
         alert("Erro ao editar");
+
         return;
 
     }
@@ -722,7 +820,6 @@ async function editarPaciente(id){
     carregarAgendamentos();
 
 }
-
 async function gerarPDF(){
 
     const filtroCidade = document.getElementById('filtroCidade').value;
