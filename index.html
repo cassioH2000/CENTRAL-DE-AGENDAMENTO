@@ -288,12 +288,35 @@ async function salvarAgendamento(){
     }
 
     alert("Agendamento salvo!");
+   
 
    
     carregarAgendamentos();
 
 }
+function limparCampos(){
 
+    document.getElementById('paciente').value = '';
+
+    document.getElementById('cpfPaciente').value = '';
+
+    document.getElementById('acompanhante').value = '';
+
+    document.getElementById('cpfAcompanhante').value = '';
+
+    document.getElementById('procedimento').value = '';
+
+    document.getElementById('cidade').value = '';
+
+    document.getElementById('local').value = '';
+
+    document.getElementById('dataAgendamento').value = '';
+
+    document.getElementById('horario').value = '';
+
+    document.getElementById('telefone').value = '';
+
+}
 async function carregarAgendamentos(){
 
     let query = supabaseClient
