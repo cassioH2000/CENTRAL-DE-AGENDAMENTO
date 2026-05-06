@@ -3,16 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Sistema de Agendamento</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
 <style>
@@ -147,11 +144,6 @@ button:hover{
     margin-bottom:15px;
     cursor:pointer;
     box-shadow:0 4px 10px rgba(0,0,0,0.08);
-    transition:0.2s;
-}
-
-.pasta:hover{
-    transform:translateY(-2px);
 }
 
 .botoes{
@@ -187,76 +179,43 @@ button:hover{
 <div class="container">
 
 <div class="topo">
-    <h1>📋 Sistema de Agendamento</h1>
+<h1>📋 Sistema de Agendamento</h1>
 </div>
 
 <div class="card">
 
-    <h2 style="margin-bottom:20px;">
-        Novo Agendamento
-    </h2>
+<h2 style="margin-bottom:20px;">
+Novo Agendamento
+</h2>
 
-    <div class="grid">
+<div class="grid">
 
-        <input type="text" id="paciente" placeholder="Nome do Paciente">
-
-        <input type="text" id="cpfPaciente" placeholder="CPF do Paciente">
-
-        <input type="text" id="acompanhante" placeholder="Nome do Acompanhante">
-
-        <input type="text" id="cpfAcompanhante" placeholder="CPF do Acompanhante">
-
-        <input type="text" id="procedimento" placeholder="Procedimento">
-
-        <input type="text" id="cidade" placeholder="Cidade">
-
-        <input type="text" id="local" placeholder="Local de Atendimento">
-
-        <input type="date" id="dataAgendamento">
-
-        <input type="time" id="horario">
-
-        <input type="text" id="telefone" placeholder="Telefone">
-
-    </div>
-
-    <div style="margin-top:20px;">
-
-        <button type="button" class="btn-salvar" onclick="salvarAgendamento()">
-            Salvar Agendamento
-        </button>
-
-    </div>
+<input type="text" id="paciente" placeholder="Nome do Paciente">
+<input type="text" id="cpfPaciente" placeholder="CPF do Paciente">
+<input type="text" id="acompanhante" placeholder="Nome do Acompanhante">
+<input type="text" id="cpfAcompanhante" placeholder="CPF do Acompanhante">
+<input type="text" id="procedimento" placeholder="Procedimento">
+<input type="text" id="cidade" placeholder="Cidade">
+<input type="text" id="local" placeholder="Local de Atendimento">
+<input type="date" id="dataAgendamento">
+<input type="time" id="horario">
+<input type="text" id="telefone" placeholder="Telefone">
 
 </div>
 
-<div class="card">
-
-    <h2 style="margin-bottom:20px;">
-        Filtros e PDF
-    </h2>
-
-    <div class="filtros">
-
-        <input type="date" id="filtroData">
-
-        <input type="text" id="filtroCidade" placeholder="Filtrar Cidade">
-
-        <button class="btn-pdf" onclick="gerarPDF()">
-            Gerar PDF
-        </button>
-
-    </div>
+<div style="margin-top:20px;">
+<button type="button" class="btn-salvar" onclick="salvarAgendamento()">
+Salvar Agendamento
+</button>
+</div>
 
 </div>
 
 <h2 style="margin-bottom:20px;">
-    Datas Agendadas
+Datas Agendadas
 </h2>
 
 <div id="listaDatas"></div>
-
-<div class="lista" id="lista"></div>
 
 </div>
 
@@ -283,79 +242,39 @@ function formatarCPF(valor){
 }
 
 document.getElementById('cpfPaciente').addEventListener('input', function(){
-
     this.value = formatarCPF(this.value);
-
 });
 
 document.getElementById('cpfAcompanhante').addEventListener('input', function(){
-
     this.value = formatarCPF(this.value);
-
 });
 
 async function salvarAgendamento(){
 
-    console.log("BOTÃO FUNCIONOU");
-
     const paciente = document.getElementById('paciente').value;
-
     const cpfPaciente = document.getElementById('cpfPaciente').value;
-
     const acompanhante = document.getElementById('acompanhante').value;
-
     const cpfAcompanhante = document.getElementById('cpfAcompanhante').value;
-
     const procedimento = document.getElementById('procedimento').value;
-
-    const cidade = document.getElementById('cidade').value;
-
+    const cidade = document.getElementById('cidade').value.trim();
     const local = document.getElementById('local').value;
-
     const dataAgendamento = document.getElementById('dataAgendamento').value;
-
     const horario = document.getElementById('horario').value;
-
     const telefone = document.getElementById('telefone').value;
-
-    if(
-        !paciente ||
-        !cpfPaciente ||
-        !procedimento ||
-        !cidade ||
-        !local ||
-        !dataAgendamento ||
-        !horario ||
-        !telefone
-    ){
-
-        alert("Preencha todos os campos obrigatórios");
-        return;
-
-    }
 
     const { error } = await supabaseClient
     .from('agendamentos')
     .insert([{
 
         paciente,
-
         cpf_paciente:cpfPaciente,
-
         acompanhante,
-
         cpf_acompanhante:cpfAcompanhante,
-
         procedimento,
-
         cidade,
-
         local_atendimento:local,
-
         data:dataAgendamento,
-
         horario,
-
         telefone
 
     }]);
@@ -363,7 +282,6 @@ async function salvarAgendamento(){
     if(error){
 
         console.log(error);
-
         alert("Erro ao salvar");
         return;
 
@@ -371,59 +289,17 @@ async function salvarAgendamento(){
 
     alert("Agendamento salvo!");
 
-    limparCampos();
-
     carregarAgendamentos();
 
 }
 
-function limparCampos(){
-
-    document.getElementById('paciente').value = '';
-
-    document.getElementById('cpfPaciente').value = '';
-
-    document.getElementById('acompanhante').value = '';
-
-    document.getElementById('cpfAcompanhante').value = '';
-
-    document.getElementById('procedimento').value = '';
-
-    document.getElementById('cidade').value = '';
-
-    document.getElementById('local').value = '';
-
-    document.getElementById('dataAgendamento').value = '';
-
-    document.getElementById('horario').value = '';
-
-    document.getElementById('telefone').value = '';
-
-}
-
 async function carregarAgendamentos(){
-
-    const filtroCidade = document.getElementById('filtroCidade').value;
-
-    const filtroData = document.getElementById('filtroData').value;
 
     let query = supabaseClient
     .from('agendamentos')
     .select('*')
     .order('data',{ascending:true})
     .order('horario',{ascending:true});
-
-    if(filtroCidade){
-
-        query = query.ilike('cidade', `%${filtroCidade}%`);
-
-    }
-
-    if(filtroData){
-
-        query = query.eq('data', filtroData);
-
-    }
 
     const { data:agendamentos, error } = await query;
 
@@ -474,7 +350,7 @@ async function carregarAgendamentos(){
 
         Object.keys(cidadesAgrupadas).forEach(cidade=>{
 
-           conteudoPacientes += `
+            conteudoPacientes += `
 
 <div style="
 background:#111;
@@ -483,497 +359,341 @@ padding:15px;
 border-radius:14px;
 margin-top:20px;
 margin-bottom:15px;
+">
+
+<div
+onclick="toggleData('cidade-${data.replaceAll('-','')}-${cidade}')"
+style="
 display:flex;
 justify-content:space-between;
 align-items:center;
 flex-wrap:wrap;
 gap:15px;
+cursor:pointer;
 ">
 
-    <div>
+<div>
 
-        <h2>
-        📁 ${cidade}
-        </h2>
+<h2>📁 ${cidade}</h2>
 
-        <p>
-        ${cidadesAgrupadas[cidade].length} pacientes
-        </p>
+<p>
 
-    </div>
+${cidadesAgrupadas[cidade].length} pacientes
 
-    <button
-    onclick="gerarPDFCidade('${data}','${cidade}')"
-    style="
-    background:#1f8bff;
-    color:white;
-    border:none;
-    padding:12px 18px;
-    border-radius:12px;
-    cursor:pointer;
-    font-weight:600;
-    ">
+<br>
 
-        📄 Gerar PDF
+${cidadesAgrupadas[cidade].filter(p =>
+p.acompanhante && p.acompanhante.trim() !== ''
+).length} acompanhantes
 
-    </button>
+<br><br>
+
+<strong>
+
+${
+cidadesAgrupadas[cidade].length +
+
+cidadesAgrupadas[cidade].filter(p =>
+p.acompanhante && p.acompanhante.trim() !== ''
+).length
+
+} pessoas no total
+
+</strong>
+
+</p>
 
 </div>
 
-            `;
+<button
+onclick="event.stopPropagation(); gerarPDFCidade('${data}','${cidade}')"
+style="
+background:#1f8bff;
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
+">
 
-            cidadesAgrupadas[cidade].forEach(item=>{
+📄 Gerar PDF
 
-                conteudoPacientes += `
+</button>
 
-                <div class="item">
+</div>
 
-                    <div class="item-topo">
+<div
+id="cidade-${data.replaceAll('-','')}-${cidade}"
+style="
+display:none;
+margin-top:20px;
+">
 
-                        <div>
+`;
 
-                            <div class="horario">
-                                ${item.horario}
-                            </div>
+cidadesAgrupadas[cidade].forEach(item=>{
 
-                            <div class="paciente">
-                                ${item.paciente}
-                            </div>
+conteudoPacientes += `
 
-                        </div>
+<div class="item">
 
-                        <div>
+<div class="item-topo">
 
-                            <strong>${item.cidade}</strong>
+<div>
 
-                        </div>
+<div class="horario">
+${item.horario}
+</div>
 
-                    </div>
+<div class="paciente">
+${item.paciente}
+</div>
 
-                    <div class="info">
+</div>
 
-                        <div>
-                            <strong>CPF Paciente</strong><br>
-                            ${item.cpf_paciente}
-                        </div>
+<div>
 
-                        <div>
-                            <strong>Acompanhante</strong><br>
-                            ${item.acompanhante || 'Sem acompanhante'}
-                        </div>
+<strong>${item.cidade}</strong>
 
-                        <div>
-                            <strong>CPF Acompanhante</strong><br>
-                            ${item.cpf_acompanhante || '-'}
-                        </div>
+</div>
 
-                        <div>
-                            <strong>Procedimento</strong><br>
-                            ${item.procedimento}
-                        </div>
+</div>
 
-                        <div>
-                            <strong>Local</strong><br>
-                            ${item.local_atendimento}
-                        </div>
+<div class="info">
 
-                        <div>
-                            <strong>Telefone</strong><br>
-                            ${item.telefone}
-                        </div>
+<div>
+<strong>CPF Paciente</strong><br>
+${item.cpf_paciente}
+</div>
 
-                    </div>
+<div>
+<strong>Acompanhante</strong><br>
+${item.acompanhante || 'Sem acompanhante'}
+</div>
 
-                    <div class="botoes">
+<div>
+<strong>Telefone</strong><br>
+${item.telefone}
+</div>
 
-                        <button
-                        class="btn-editar"
-                        onclick="editarPaciente(${item.id})">
-                            ✏️ Editar
-                        </button>
+</div>
 
-                        <button
-                        class="btn-excluir"
-                        onclick="excluirPaciente(${item.id})">
-                            🗑 Excluir
-                        </button>
+<div class="botoes">
 
-                    </div>
+<button
+class="btn-editar"
+onclick="editarPaciente(${item.id})">
+✏️ Editar
+</button>
 
-                </div>
+<button
+class="btn-excluir"
+onclick="excluirPaciente(${item.id})">
+🗑 Excluir
+</button>
 
-                `;
+</div>
 
-            });
+</div>
 
-        });
+`;
 
-        listaDatas.innerHTML += `
+});
 
-        <div class="pasta">
+conteudoPacientes += `
 
-            <div
-            onclick="toggleData('conteudo-${data}')"
-            style="
-            cursor:pointer;
-            ">
+</div>
 
-                <h3>
-                📁 ${data}
-                </h3>
+</div>
 
-                <p>
-                ${pacientes.length} pacientes
-                </p>
+`;
 
-            </div>
+});
 
-            <div
-            id="conteudo-${data}"
-            style="
-            display:none;
-            margin-top:20px;
-            ">
+listaDatas.innerHTML += `
 
-                ${conteudoPacientes}
+<div class="pasta">
 
-            </div>
+<div
+onclick="toggleData('conteudo-${data.replaceAll('-','')}')"
+style="cursor:pointer;">
 
-        </div>
+<h3>📁 ${data}</h3>
 
-        `;
+<p>
+${pacientes.length} pacientes
+</p>
 
-    });
+</div>
+
+<div
+id="conteudo-${data.replaceAll('-','')}"
+style="
+display:none;
+margin-top:20px;
+">
+
+${conteudoPacientes}
+
+</div>
+
+</div>
+
+`;
+
+});
 
 }
+
 function toggleData(id){
 
-    const elemento = document.getElementById(id);
+const elemento = document.getElementById(id);
 
-    if(elemento.style.display === 'none'){
+if(elemento.style.display === 'none'){
 
-        elemento.style.display = 'block';
+    elemento.style.display = 'block';
 
-    }else{
+}else{
 
-        elemento.style.display = 'none';
-
-    }
+    elemento.style.display = 'none';
 
 }
+
+}
+
 async function excluirPaciente(id){
 
-    const confirmar = confirm(
-        "Deseja excluir este paciente?"
-    );
+const confirmar = confirm("Deseja excluir este paciente?");
 
-    if(!confirmar) return;
+if(!confirmar) return;
 
-    const { error } = await supabaseClient
-    .from('agendamentos')
-    .delete()
-    .eq('id', id);
+await supabaseClient
+.from('agendamentos')
+.delete()
+.eq('id', id);
 
-    if(error){
+alert("Paciente excluído!");
 
-        console.log(error);
-
-        alert("Erro ao excluir");
-        return;
-
-    }
-
-    alert("Paciente excluído!");
-
-    carregarAgendamentos();
-
-    document.getElementById('lista').innerHTML = '';
+carregarAgendamentos();
 
 }
 
 async function editarPaciente(id){
 
-    const { data:paciente, error } = await supabaseClient
-    .from('agendamentos')
-    .select('*')
-    .eq('id', id)
-    .single();
+const { data:paciente } = await supabaseClient
+.from('agendamentos')
+.select('*')
+.eq('id', id)
+.single();
 
-    if(error){
+document.getElementById('editarId').value = paciente.id;
+document.getElementById('editarPaciente').value = paciente.paciente;
+document.getElementById('editarCpfPaciente').value = paciente.cpf_paciente;
+document.getElementById('editarAcompanhante').value = paciente.acompanhante || '';
+document.getElementById('editarCpfAcompanhante').value = paciente.cpf_acompanhante || '';
+document.getElementById('editarProcedimento').value = paciente.procedimento;
+document.getElementById('editarCidade').value = paciente.cidade;
+document.getElementById('editarLocal').value = paciente.local_atendimento;
+document.getElementById('editarData').value = paciente.data;
+document.getElementById('editarHorario').value = paciente.horario;
+document.getElementById('editarTelefone').value = paciente.telefone;
 
-        console.log(error);
-
-        alert("Erro ao buscar paciente");
-
-        return;
-
-    }
-
-    document.getElementById('editarId').value = paciente.id;
-
-    document.getElementById('editarPaciente').value = paciente.paciente;
-
-    document.getElementById('editarCpfPaciente').value = paciente.cpf_paciente;
-
-    document.getElementById('editarAcompanhante').value = paciente.acompanhante || '';
-
-    document.getElementById('editarCpfAcompanhante').value = paciente.cpf_acompanhante || '';
-
-    document.getElementById('editarProcedimento').value = paciente.procedimento;
-
-    document.getElementById('editarCidade').value = paciente.cidade;
-
-    document.getElementById('editarLocal').value = paciente.local_atendimento;
-
-    document.getElementById('editarData').value = paciente.data;
-
-    document.getElementById('editarHorario').value = paciente.horario;
-
-    document.getElementById('editarTelefone').value = paciente.telefone;
-
-    document.getElementById('modalEditar').style.display = 'flex';
-
-}
-async function gerarPDF(){
-
-    const filtroCidade = document.getElementById('filtroCidade').value;
-
-    const filtroData = document.getElementById('filtroData').value;
-
-    let query = supabaseClient
-    .from('agendamentos')
-    .select('*')
-    .order('horario',{ascending:true});
-
-    if(filtroCidade){
-
-        query = query.ilike('cidade', `%${filtroCidade}%`);
-
-    }
-
-    if(filtroData){
-
-        query = query.eq('data', filtroData);
-
-    }
-
-    const { data:agendamentos } = await query;
-
-    const { jsPDF } = window.jspdf;
-
-    const doc = new jsPDF();
-
-    doc.setFontSize(18);
-
-    doc.text("LISTA DE PACIENTES", 14, 20);
-
-    doc.setFontSize(12);
-
-    doc.text(
-        `Cidade: ${filtroCidade || 'Todas'}`,
-        14,
-        30
-    );
-
-    doc.text(
-        `Data: ${filtroData || 'Todas'}`,
-        14,
-        38
-    );
-
-    const tabela = agendamentos.map(item => [
-
-        item.horario,
-
-        item.paciente,
-
-        item.cpf_paciente,
-
-        item.acompanhante || '-',
-
-        item.telefone,
-
-        item.procedimento
-
-    ]);
-
-    doc.autoTable({
-
-        head:[[
-            'Horário',
-            'Paciente',
-            'CPF',
-            'Acompanhante',
-            'Telefone',
-            'Procedimento'
-        ]],
-
-        body:tabela,
-
-        startY:50
-
-    });
-
-    doc.save('lista-pacientes.pdf');
+document.getElementById('modalEditar').style.display = 'flex';
 
 }
 
-document.getElementById('filtroCidade')
-.addEventListener('input', carregarAgendamentos);
-
-document.getElementById('filtroData')
-.addEventListener('change', carregarAgendamentos);
-    async function gerarPDFCidade(data,cidade){
-
-    const { data:agendamentos, error } = await supabaseClient
-    .from('agendamentos')
-    .select('*')
-    .eq('data', data)
-    .eq('cidade', cidade)
-    .order('horario',{ascending:true});
-
-    if(error){
-
-        console.log(error);
-        return;
-
-    }
-
-    const { jsPDF } = window.jspdf;
-
-    const doc = new jsPDF();
-
-    doc.setFontSize(18);
-
-    doc.text("LISTA DE PACIENTES", 14, 20);
-
-    doc.setFontSize(12);
-
-    doc.text(`Cidade: ${cidade}`, 14, 30);
-
-    doc.text(`Data: ${data}`, 14, 38);
-
-    doc.text(
-        `Total de Pacientes: ${agendamentos.length}`,
-        14,
-        46
-    );
-
-    const tabela = agendamentos.map(item => [
-
-        item.horario,
-
-        item.paciente,
-
-        item.cpf_paciente,
-
-        item.acompanhante || '-',
-
-        item.telefone,
-
-        item.procedimento
-
-    ]);
-
-    doc.autoTable({
-
-        head:[[
-            'Horário',
-            'Paciente',
-            'CPF',
-            'Acompanhante',
-            'Telefone',
-            'Procedimento'
-        ]],
-
-        body:tabela,
-
-        startY:55
-
-    });
-
-    doc.save(
-        `Pacientes-${cidade}-${data}.pdf`
-    );
-
-}
 function fecharModalEditar(){
 
-    document.getElementById('modalEditar').style.display = 'none';
+document.getElementById('modalEditar').style.display = 'none';
 
 }
 
 async function salvarEdicao(){
 
-    const id = document.getElementById('editarId').value;
+const id = document.getElementById('editarId').value;
 
-    const paciente = document.getElementById('editarPaciente').value;
+await supabaseClient
+.from('agendamentos')
+.update({
 
-    const cpfPaciente = document.getElementById('editarCpfPaciente').value;
+paciente:document.getElementById('editarPaciente').value,
+cpf_paciente:document.getElementById('editarCpfPaciente').value,
+acompanhante:document.getElementById('editarAcompanhante').value,
+cpf_acompanhante:document.getElementById('editarCpfAcompanhante').value,
+procedimento:document.getElementById('editarProcedimento').value,
+cidade:document.getElementById('editarCidade').value,
+local_atendimento:document.getElementById('editarLocal').value,
+data:document.getElementById('editarData').value,
+horario:document.getElementById('editarHorario').value,
+telefone:document.getElementById('editarTelefone').value
 
-    const acompanhante = document.getElementById('editarAcompanhante').value;
+})
+.eq('id', id);
 
-    const cpfAcompanhante = document.getElementById('editarCpfAcompanhante').value;
+alert("Paciente atualizado!");
 
-    const procedimento = document.getElementById('editarProcedimento').value;
+fecharModalEditar();
 
-    const cidade = document.getElementById('editarCidade').value;
-
-    const local = document.getElementById('editarLocal').value;
-
-    const data = document.getElementById('editarData').value;
-
-    const horario = document.getElementById('editarHorario').value;
-
-    const telefone = document.getElementById('editarTelefone').value;
-
-    const { error } = await supabaseClient
-    .from('agendamentos')
-    .update({
-
-        paciente,
-
-        cpf_paciente:cpfPaciente,
-
-        acompanhante,
-
-        cpf_acompanhante:cpfAcompanhante,
-
-        procedimento,
-
-        cidade,
-
-        local_atendimento:local,
-
-        data,
-
-        horario,
-
-        telefone
-
-    })
-    .eq('id', id);
-
-    if(error){
-
-        console.log(error);
-
-        alert("Erro ao atualizar");
-
-        return;
-
-    }
-
-    alert("Paciente atualizado!");
-
-    fecharModalEditar();
-
-    carregarAgendamentos();
+carregarAgendamentos();
 
 }
+
+async function gerarPDFCidade(data,cidade){
+
+const { data:agendamentos } = await supabaseClient
+.from('agendamentos')
+.select('*')
+.eq('data', data)
+.eq('cidade', cidade)
+.order('horario',{ascending:true});
+
+const { jsPDF } = window.jspdf;
+
+const doc = new jsPDF();
+
+doc.setFontSize(18);
+doc.text("LISTA DE PACIENTES", 14, 20);
+
+doc.setFontSize(12);
+doc.text(`Cidade: ${cidade}`, 14, 30);
+doc.text(`Data: ${data}`, 14, 38);
+
+const tabela = agendamentos.map(item => [
+
+item.horario,
+item.paciente,
+item.cpf_paciente,
+item.acompanhante || '-',
+item.telefone,
+item.procedimento
+
+]);
+
+doc.autoTable({
+
+head:[[
+'Horário',
+'Paciente',
+'CPF',
+'Acompanhante',
+'Telefone',
+'Procedimento'
+]],
+
+body:tabela,
+startY:50
+
+});
+
+doc.save(`Pacientes-${cidade}-${data}.pdf`);
+
+}
+
 carregarAgendamentos();
 
 </script>
+
 <div id="modalEditar" style="
 position:fixed;
 top:0;
@@ -988,77 +708,67 @@ padding:20px;
 z-index:999;
 ">
 
-    <div style="
-    background:white;
-    width:100%;
-    max-width:900px;
-    border-radius:20px;
-    padding:25px;
-    max-height:95vh;
-    overflow:auto;
-    ">
+<div style="
+background:white;
+width:100%;
+max-width:900px;
+border-radius:20px;
+padding:25px;
+max-height:95vh;
+overflow:auto;
+">
 
-        <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        margin-bottom:25px;
-        ">
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+">
 
-            <h2>
-            ✏️ Editar Paciente
-            </h2>
+<h2>✏️ Editar Paciente</h2>
 
-            <button onclick="fecharModalEditar()"
-            style="
-            background:#dc3545;
-            color:white;
-            ">
-            X
-            </button>
-
-        </div>
-
-        <div class="grid">
-
-            <input type="hidden" id="editarId">
-
-            <input type="text" id="editarPaciente" placeholder="Nome do Paciente">
-
-            <input type="text" id="editarCpfPaciente" placeholder="CPF do Paciente">
-
-            <input type="text" id="editarAcompanhante" placeholder="Nome do Acompanhante">
-
-            <input type="text" id="editarCpfAcompanhante" placeholder="CPF do Acompanhante">
-
-            <input type="text" id="editarProcedimento" placeholder="Procedimento">
-
-            <input type="text" id="editarCidade" placeholder="Cidade">
-
-            <input type="text" id="editarLocal" placeholder="Local de Atendimento">
-
-            <input type="date" id="editarData">
-
-            <input type="time" id="editarHorario">
-
-            <input type="text" id="editarTelefone" placeholder="Telefone">
-
-        </div>
-
-        <div style="margin-top:25px;">
-
-            <button
-            class="btn-salvar"
-            onclick="salvarEdicao()">
-
-                Salvar Alterações
-
-            </button>
-
-        </div>
-
-    </div>
+<button onclick="fecharModalEditar()"
+style="
+background:#dc3545;
+color:white;
+">
+X
+</button>
 
 </div>
+
+<div class="grid">
+
+<input type="hidden" id="editarId">
+
+<input type="text" id="editarPaciente" placeholder="Nome do Paciente">
+<input type="text" id="editarCpfPaciente" placeholder="CPF do Paciente">
+<input type="text" id="editarAcompanhante" placeholder="Nome do Acompanhante">
+<input type="text" id="editarCpfAcompanhante" placeholder="CPF do Acompanhante">
+<input type="text" id="editarProcedimento" placeholder="Procedimento">
+<input type="text" id="editarCidade" placeholder="Cidade">
+<input type="text" id="editarLocal" placeholder="Local de Atendimento">
+<input type="date" id="editarData">
+<input type="time" id="editarHorario">
+<input type="text" id="editarTelefone" placeholder="Telefone">
+
+</div>
+
+<div style="margin-top:25px;">
+
+<button
+class="btn-salvar"
+onclick="salvarEdicao()">
+
+Salvar Alterações
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
 </body>
 </html>
