@@ -482,92 +482,132 @@ function abrirData(data){
 
     const pacientes = window.agendamentosAgrupados[data];
 
+    const cidadesAgrupadas = {};
+
     pacientes.forEach(item=>{
+
+        if(!cidadesAgrupadas[item.cidade]){
+
+            cidadesAgrupadas[item.cidade] = [];
+
+        }
+
+        cidadesAgrupadas[item.cidade].push(item);
+
+    });
+
+    Object.keys(cidadesAgrupadas).forEach(cidade=>{
 
         lista.innerHTML += `
 
-        <div class="item">
+        <div style="
+        background:#111;
+        color:white;
+        padding:15px;
+        border-radius:14px;
+        margin-top:20px;
+        margin-bottom:15px;
+        ">
 
-            <div class="item-topo">
+            <h2>
+            📁 ${cidade}
+            </h2>
 
-                <div>
-
-                    <div class="horario">
-                        ${item.horario}
-                    </div>
-
-                    <div class="paciente">
-                        ${item.paciente}
-                    </div>
-
-                </div>
-
-                <div>
-
-                    <strong>${item.cidade}</strong>
-
-                </div>
-
-            </div>
-
-            <div class="info">
-
-                <div>
-                    <strong>CPF Paciente</strong><br>
-                    ${item.cpf_paciente}
-                </div>
-
-                <div>
-                    <strong>Acompanhante</strong><br>
-                    ${item.acompanhante || 'Sem acompanhante'}
-                </div>
-
-                <div>
-                    <strong>CPF Acompanhante</strong><br>
-                    ${item.cpf_acompanhante || '-'}
-                </div>
-
-                <div>
-                    <strong>Procedimento</strong><br>
-                    ${item.procedimento}
-                </div>
-
-                <div>
-                    <strong>Local</strong><br>
-                    ${item.local_atendimento}
-                </div>
-
-                <div>
-                    <strong>Telefone</strong><br>
-                    ${item.telefone}
-                </div>
-
-            </div>
-
-            <div class="botoes">
-
-                <button
-                class="btn-editar"
-                onclick="editarPaciente(${item.id})">
-                    ✏️ Editar
-                </button>
-
-                <button
-                class="btn-excluir"
-                onclick="excluirPaciente(${item.id})">
-                    🗑 Excluir
-                </button>
-
-            </div>
+            <p>
+            ${cidadesAgrupadas[cidade].length} pacientes
+            </p>
 
         </div>
 
         `;
 
+        cidadesAgrupadas[cidade].forEach(item=>{
+
+            lista.innerHTML += `
+
+            <div class="item">
+
+                <div class="item-topo">
+
+                    <div>
+
+                        <div class="horario">
+                            ${item.horario}
+                        </div>
+
+                        <div class="paciente">
+                            ${item.paciente}
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <strong>${item.cidade}</strong>
+
+                    </div>
+
+                </div>
+
+                <div class="info">
+
+                    <div>
+                        <strong>CPF Paciente</strong><br>
+                        ${item.cpf_paciente}
+                    </div>
+
+                    <div>
+                        <strong>Acompanhante</strong><br>
+                        ${item.acompanhante || 'Sem acompanhante'}
+                    </div>
+
+                    <div>
+                        <strong>CPF Acompanhante</strong><br>
+                        ${item.cpf_acompanhante || '-'}
+                    </div>
+
+                    <div>
+                        <strong>Procedimento</strong><br>
+                        ${item.procedimento}
+                    </div>
+
+                    <div>
+                        <strong>Local</strong><br>
+                        ${item.local_atendimento}
+                    </div>
+
+                    <div>
+                        <strong>Telefone</strong><br>
+                        ${item.telefone}
+                    </div>
+
+                </div>
+
+                <div class="botoes">
+
+                    <button
+                    class="btn-editar"
+                    onclick="editarPaciente(${item.id})">
+                        ✏️ Editar
+                    </button>
+
+                    <button
+                    class="btn-excluir"
+                    onclick="excluirPaciente(${item.id})">
+                        🗑 Excluir
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
     });
 
 }
-
 async function excluirPaciente(id){
 
     const confirmar = confirm(
