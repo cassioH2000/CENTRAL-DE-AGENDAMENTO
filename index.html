@@ -23,92 +23,7 @@
     box-sizing:border-box;
     font-family:'Poppins',sans-serif;
 }
-<div id="modalEditar" style="
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.6);
-display:none;
-justify-content:center;
-align-items:center;
-padding:20px;
-z-index:999;
-">
 
-    <div style="
-    background:white;
-    width:100%;
-    max-width:900px;
-    border-radius:20px;
-    padding:25px;
-    max-height:95vh;
-    overflow:auto;
-    ">
-
-        <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        margin-bottom:25px;
-        ">
-
-            <h2>
-            ✏️ Editar Paciente
-            </h2>
-
-            <button onclick="fecharModalEditar()"
-            style="
-            background:#dc3545;
-            color:white;
-            ">
-            X
-            </button>
-
-        </div>
-
-        <div class="grid">
-
-            <input type="hidden" id="editarId">
-
-            <input type="text" id="editarPaciente" placeholder="Nome do Paciente">
-
-            <input type="text" id="editarCpfPaciente" placeholder="CPF do Paciente">
-
-            <input type="text" id="editarAcompanhante" placeholder="Nome do Acompanhante">
-
-            <input type="text" id="editarCpfAcompanhante" placeholder="CPF do Acompanhante">
-
-            <input type="text" id="editarProcedimento" placeholder="Procedimento">
-
-            <input type="text" id="editarCidade" placeholder="Cidade">
-
-            <input type="text" id="editarLocal" placeholder="Local de Atendimento">
-
-            <input type="date" id="editarData">
-
-            <input type="time" id="editarHorario">
-
-            <input type="text" id="editarTelefone" placeholder="Telefone">
-
-        </div>
-
-        <div style="margin-top:25px;">
-
-            <button
-            class="btn-salvar"
-            onclick="salvarEdicao()">
-
-                Salvar Alterações
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
 body{
     background:#f4f6f9;
     padding:20px;
@@ -982,10 +897,168 @@ document.getElementById('filtroData')
     );
 
 }
+function fecharModalEditar(){
 
+    document.getElementById('modalEditar').style.display = 'none';
+
+}
+
+async function salvarEdicao(){
+
+    const id = document.getElementById('editarId').value;
+
+    const paciente = document.getElementById('editarPaciente').value;
+
+    const cpfPaciente = document.getElementById('editarCpfPaciente').value;
+
+    const acompanhante = document.getElementById('editarAcompanhante').value;
+
+    const cpfAcompanhante = document.getElementById('editarCpfAcompanhante').value;
+
+    const procedimento = document.getElementById('editarProcedimento').value;
+
+    const cidade = document.getElementById('editarCidade').value;
+
+    const local = document.getElementById('editarLocal').value;
+
+    const data = document.getElementById('editarData').value;
+
+    const horario = document.getElementById('editarHorario').value;
+
+    const telefone = document.getElementById('editarTelefone').value;
+
+    const { error } = await supabaseClient
+    .from('agendamentos')
+    .update({
+
+        paciente,
+
+        cpf_paciente:cpfPaciente,
+
+        acompanhante,
+
+        cpf_acompanhante:cpfAcompanhante,
+
+        procedimento,
+
+        cidade,
+
+        local_atendimento:local,
+
+        data,
+
+        horario,
+
+        telefone
+
+    })
+    .eq('id', id);
+
+    if(error){
+
+        console.log(error);
+
+        alert("Erro ao atualizar");
+
+        return;
+
+    }
+
+    alert("Paciente atualizado!");
+
+    fecharModalEditar();
+
+    carregarAgendamentos();
+
+}
 carregarAgendamentos();
 
 </script>
+<div id="modalEditar" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+justify-content:center;
+align-items:center;
+padding:20px;
+z-index:999;
+">
 
+    <div style="
+    background:white;
+    width:100%;
+    max-width:900px;
+    border-radius:20px;
+    padding:25px;
+    max-height:95vh;
+    overflow:auto;
+    ">
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:25px;
+        ">
+
+            <h2>
+            ✏️ Editar Paciente
+            </h2>
+
+            <button onclick="fecharModalEditar()"
+            style="
+            background:#dc3545;
+            color:white;
+            ">
+            X
+            </button>
+
+        </div>
+
+        <div class="grid">
+
+            <input type="hidden" id="editarId">
+
+            <input type="text" id="editarPaciente" placeholder="Nome do Paciente">
+
+            <input type="text" id="editarCpfPaciente" placeholder="CPF do Paciente">
+
+            <input type="text" id="editarAcompanhante" placeholder="Nome do Acompanhante">
+
+            <input type="text" id="editarCpfAcompanhante" placeholder="CPF do Acompanhante">
+
+            <input type="text" id="editarProcedimento" placeholder="Procedimento">
+
+            <input type="text" id="editarCidade" placeholder="Cidade">
+
+            <input type="text" id="editarLocal" placeholder="Local de Atendimento">
+
+            <input type="date" id="editarData">
+
+            <input type="time" id="editarHorario">
+
+            <input type="text" id="editarTelefone" placeholder="Telefone">
+
+        </div>
+
+        <div style="margin-top:25px;">
+
+            <button
+            class="btn-salvar"
+            onclick="salvarEdicao()">
+
+                Salvar Alterações
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 </body>
 </html>
