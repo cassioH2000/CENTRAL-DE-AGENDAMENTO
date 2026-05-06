@@ -23,7 +23,92 @@
     box-sizing:border-box;
     font-family:'Poppins',sans-serif;
 }
+<div id="modalEditar" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+justify-content:center;
+align-items:center;
+padding:20px;
+z-index:999;
+">
 
+    <div style="
+    background:white;
+    width:100%;
+    max-width:900px;
+    border-radius:20px;
+    padding:25px;
+    max-height:95vh;
+    overflow:auto;
+    ">
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:25px;
+        ">
+
+            <h2>
+            ✏️ Editar Paciente
+            </h2>
+
+            <button onclick="fecharModalEditar()"
+            style="
+            background:#dc3545;
+            color:white;
+            ">
+            X
+            </button>
+
+        </div>
+
+        <div class="grid">
+
+            <input type="hidden" id="editarId">
+
+            <input type="text" id="editarPaciente" placeholder="Nome do Paciente">
+
+            <input type="text" id="editarCpfPaciente" placeholder="CPF do Paciente">
+
+            <input type="text" id="editarAcompanhante" placeholder="Nome do Acompanhante">
+
+            <input type="text" id="editarCpfAcompanhante" placeholder="CPF do Acompanhante">
+
+            <input type="text" id="editarProcedimento" placeholder="Procedimento">
+
+            <input type="text" id="editarCidade" placeholder="Cidade">
+
+            <input type="text" id="editarLocal" placeholder="Local de Atendimento">
+
+            <input type="date" id="editarData">
+
+            <input type="time" id="editarHorario">
+
+            <input type="text" id="editarTelefone" placeholder="Telefone">
+
+        </div>
+
+        <div style="margin-top:25px;">
+
+            <button
+            class="btn-salvar"
+            onclick="salvarEdicao()">
+
+                Salvar Alterações
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 body{
     background:#f4f6f9;
     padding:20px;
@@ -693,131 +778,45 @@ async function excluirPaciente(id){
 
 async function editarPaciente(id){
 
-    const { data:paciente, error:erroBusca } = await supabaseClient
+    const { data:paciente, error } = await supabaseClient
     .from('agendamentos')
     .select('*')
     .eq('id', id)
     .single();
 
-    if(erroBusca){
-
-        console.log(erroBusca);
-
-        alert("Erro ao buscar paciente");
-        return;
-
-    }
-
-    const novoPaciente = prompt(
-        "Nome do Paciente:",
-        paciente.paciente
-    );
-
-    if(novoPaciente === null) return;
-
-    const novoCpfPaciente = prompt(
-        "CPF do Paciente:",
-        paciente.cpf_paciente
-    );
-
-    if(novoCpfPaciente === null) return;
-
-    const novoAcompanhante = prompt(
-        "Nome do Acompanhante:",
-        paciente.acompanhante || ''
-    );
-
-    if(novoAcompanhante === null) return;
-
-    const novoCpfAcompanhante = prompt(
-        "CPF do Acompanhante:",
-        paciente.cpf_acompanhante || ''
-    );
-
-    if(novoCpfAcompanhante === null) return;
-
-    const novoProcedimento = prompt(
-        "Procedimento:",
-        paciente.procedimento
-    );
-
-    if(novoProcedimento === null) return;
-
-    const novaCidade = prompt(
-        "Cidade:",
-        paciente.cidade
-    );
-
-    if(novaCidade === null) return;
-
-    const novoLocal = prompt(
-        "Local de Atendimento:",
-        paciente.local_atendimento
-    );
-
-    if(novoLocal === null) return;
-
-    const novaData = prompt(
-        "Data:",
-        paciente.data
-    );
-
-    if(novaData === null) return;
-
-    const novoHorario = prompt(
-        "Horário:",
-        paciente.horario
-    );
-
-    if(novoHorario === null) return;
-
-    const novoTelefone = prompt(
-        "Telefone:",
-        paciente.telefone
-    );
-
-    if(novoTelefone === null) return;
-
-    const { error } = await supabaseClient
-    .from('agendamentos')
-    .update({
-
-        paciente:novoPaciente,
-
-        cpf_paciente:novoCpfPaciente,
-
-        acompanhante:novoAcompanhante,
-
-        cpf_acompanhante:novoCpfAcompanhante,
-
-        procedimento:novoProcedimento,
-
-        cidade:novaCidade.trim(),
-
-        local_atendimento:novoLocal,
-
-        data:novaData,
-
-        horario:novoHorario,
-
-        telefone:novoTelefone
-
-    })
-    .eq('id', id);
-
     if(error){
 
         console.log(error);
 
-        alert("Erro ao editar");
+        alert("Erro ao buscar paciente");
 
         return;
 
     }
 
-    alert("Paciente atualizado!");
+    document.getElementById('editarId').value = paciente.id;
 
-    carregarAgendamentos();
+    document.getElementById('editarPaciente').value = paciente.paciente;
+
+    document.getElementById('editarCpfPaciente').value = paciente.cpf_paciente;
+
+    document.getElementById('editarAcompanhante').value = paciente.acompanhante || '';
+
+    document.getElementById('editarCpfAcompanhante').value = paciente.cpf_acompanhante || '';
+
+    document.getElementById('editarProcedimento').value = paciente.procedimento;
+
+    document.getElementById('editarCidade').value = paciente.cidade;
+
+    document.getElementById('editarLocal').value = paciente.local_atendimento;
+
+    document.getElementById('editarData').value = paciente.data;
+
+    document.getElementById('editarHorario').value = paciente.horario;
+
+    document.getElementById('editarTelefone').value = paciente.telefone;
+
+    document.getElementById('modalEditar').style.display = 'flex';
 
 }
 async function gerarPDF(){
