@@ -474,24 +474,51 @@ async function carregarAgendamentos(){
 
         Object.keys(cidadesAgrupadas).forEach(cidade=>{
 
-            conteudoPacientes += `
+           conteudoPacientes += `
 
-            <div style="
-            background:#111;
-            color:white;
-            padding:15px;
-            border-radius:14px;
-            margin-top:20px;
-            margin-bottom:15px;
-            ">
+<div style="
+background:#111;
+color:white;
+padding:15px;
+border-radius:14px;
+margin-top:20px;
+margin-bottom:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
+">
 
-                <h2>📁 ${cidade}</h2>
+    <div>
 
-                <p>
-                ${cidadesAgrupadas[cidade].length} pacientes
-                </p>
+        <h2>
+        📁 ${cidade}
+        </h2>
 
-            </div>
+        <p>
+        ${cidadesAgrupadas[cidade].length} pacientes
+        </p>
+
+    </div>
+
+    <button
+    onclick="gerarPDFCidade('${data}','${cidade}')"
+    style="
+    background:#1f8bff;
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+    ">
+
+        📄 Gerar PDF
+
+    </button>
+
+</div>
 
             `;
 
@@ -785,6 +812,80 @@ document.getElementById('filtroCidade')
 
 document.getElementById('filtroData')
 .addEventListener('change', carregarAgendamentos);
+    async function gerarPDFCidade(data,cidade){
+
+    const { data:agendamentos, error } = await supabaseClient
+    .from('agendamentos')
+    .select('*')
+    .eq('data', data)
+    .eq('cidade', cidade)
+    .order('horario',{ascending:true});
+
+    if(error){
+
+        console.log(error);
+        return;
+
+    }
+
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+
+    doc.text("LISTA DE PACIENTES", 14, 20);
+
+    doc.setFontSize(12);
+
+    doc.text(`Cidade: ${cidade}`, 14, 30);
+
+    doc.text(`Data: ${data}`, 14, 38);
+
+    doc.text(
+        `Total de Pacientes: ${agendamentos.length}`,
+        14,
+        46
+    );
+
+    const tabela = agendamentos.map(item => [
+
+        item.horario,
+
+        item.paciente,
+
+        item.cpf_paciente,
+
+        item.acompanhante || '-',
+
+        item.telefone,
+
+        item.procedimento
+
+    ]);
+
+    doc.autoTable({
+
+        head:[[
+            'Horário',
+            'Paciente',
+            'CPF',
+            'Acompanhante',
+            'Telefone',
+            'Procedimento'
+        ]],
+
+        body:tabela,
+
+        startY:55
+
+    });
+
+    doc.save(
+        `Pacientes-${cidade}-${data}.pdf`
+    );
+
+}
 
 carregarAgendamentos();
 
