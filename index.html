@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Sistema de Agendamento</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
 <style>
@@ -25,7 +27,7 @@
 body{
     background:#f4f6f9;
     padding:20px;
-    color:#222;
+    color:#111;
 }
 
 .container{
@@ -39,15 +41,15 @@ body{
 
 .topo h1{
     font-size:32px;
-    color:#111;
+    font-weight:700;
 }
 
 .card{
-    background:#fff;
+    background:white;
     border-radius:18px;
     padding:25px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
     margin-bottom:25px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
 .grid{
@@ -56,7 +58,7 @@ body{
     gap:15px;
 }
 
-input,select{
+input{
     width:100%;
     padding:14px;
     border-radius:12px;
@@ -66,36 +68,25 @@ input,select{
 
 button{
     border:none;
-    padding:14px 20px;
     border-radius:12px;
+    padding:14px 20px;
     cursor:pointer;
     font-weight:600;
     transition:0.2s;
 }
 
-.btn-salvar{
-    background:#111;
-    color:#fff;
+button:hover{
+    opacity:0.9;
 }
 
-.btn-salvar:hover{
-    background:#000;
+.btn-salvar{
+    background:#111;
+    color:white;
 }
 
 .btn-pdf{
     background:#1f8bff;
     color:white;
-}
-
-.btn-pdf:hover{
-    background:#006be0;
-}
-
-.filtros{
-    display:flex;
-    gap:15px;
-    flex-wrap:wrap;
-    margin-bottom:20px;
 }
 
 .lista{
@@ -105,10 +96,10 @@ button{
 }
 
 .item{
-    background:#fff;
+    background:white;
+    padding:20px;
     border-radius:16px;
-    padding:18px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.06);
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
     border-left:6px solid #111;
 }
 
@@ -130,7 +121,7 @@ button{
 }
 
 .info{
-    margin-top:10px;
+    margin-top:15px;
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
     gap:10px;
@@ -143,10 +134,41 @@ button{
     font-size:14px;
 }
 
-.titulo-lista{
+.filtros{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.pasta{
+    background:white;
+    padding:20px;
+    border-radius:16px;
     margin-bottom:15px;
-    font-size:24px;
-    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    transition:0.2s;
+}
+
+.pasta:hover{
+    transform:translateY(-2px);
+}
+
+.botoes{
+    margin-top:15px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn-editar{
+    background:#ffc107;
+    color:black;
+}
+
+.btn-excluir{
+    background:#dc3545;
+    color:white;
 }
 
 @media(max-width:700px){
@@ -165,72 +187,76 @@ button{
 <div class="container">
 
 <div class="topo">
-<h1>📋 Sistema de Agendamento</h1>
+    <h1>📋 Sistema de Agendamento</h1>
 </div>
 
 <div class="card">
 
-<h2 style="margin-bottom:20px;">Novo Agendamento</h2>
+    <h2 style="margin-bottom:20px;">
+        Novo Agendamento
+    </h2>
 
-<div class="grid">
+    <div class="grid">
 
-<input type="text" id="paciente" placeholder="Nome do Paciente">
+        <input type="text" id="paciente" placeholder="Nome do Paciente">
 
-<input type="text" id="cpfPaciente" placeholder="CPF do Paciente">
+        <input type="text" id="cpfPaciente" placeholder="CPF do Paciente">
 
-<input type="text" id="acompanhante" placeholder="Nome do Acompanhante">
+        <input type="text" id="acompanhante" placeholder="Nome do Acompanhante">
 
-<input type="text" id="cpfAcompanhante" placeholder="CPF do Acompanhante">
+        <input type="text" id="cpfAcompanhante" placeholder="CPF do Acompanhante">
 
-<input type="text" id="procedimento" placeholder="Procedimento">
+        <input type="text" id="procedimento" placeholder="Procedimento">
 
-<input type="text" id="cidade" placeholder="Cidade">
+        <input type="text" id="cidade" placeholder="Cidade">
 
-<input type="text" id="local" placeholder="Local de Atendimento">
+        <input type="text" id="local" placeholder="Local de Atendimento">
 
-<input type="date" id="data">
+        <input type="date" id="dataAgendamento">
 
-<input type="time" id="horario">
+        <input type="time" id="horario">
 
-<input type="text" id="telefone" placeholder="Telefone">
+        <input type="text" id="telefone" placeholder="Telefone">
 
-</div>
+    </div>
 
-<div style="margin-top:20px;">
-<button class="btn-salvar" onclick="salvarAgendamento()">
-Salvar Agendamento
-</button>
-</div>
+    <div style="margin-top:20px;">
+
+        <button type="button" class="btn-salvar" onclick="salvarAgendamento()">
+            Salvar Agendamento
+        </button>
+
+    </div>
 
 </div>
 
 <div class="card">
 
-<h2 style="margin-bottom:20px;">Filtros</h2>
+    <h2 style="margin-bottom:20px;">
+        Filtros e PDF
+    </h2>
 
-<div class="filtros">
+    <div class="filtros">
 
-<input type="date" id="filtroData">
+        <input type="date" id="filtroData">
 
-<input type="text" id="filtroCidade" placeholder="Filtrar Cidade">
+        <input type="text" id="filtroCidade" placeholder="Filtrar Cidade">
 
-<button class="btn-pdf" onclick="gerarPDF()">
-Gerar PDF
-</button>
+        <button class="btn-pdf" onclick="gerarPDF()">
+            Gerar PDF
+        </button>
+
+    </div>
 
 </div>
 
-</div>
-
-<div>
-
-<h2 class="titulo-lista">
-Lista de Pacientes
+<h2 style="margin-bottom:20px;">
+    Datas Agendadas
 </h2>
 
-<div class="lista" id="lista"></div>
+<div id="listaDatas"></div>
 
-</div>
+<div class="lista" id="lista"></div>
 
 </div>
 
@@ -239,7 +265,7 @@ Lista de Pacientes
 const SUPABASE_URL = "https://raqshdplnuweiljfhqfr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_gTx_MGSkk2r_ryamL8k8PQ_iCx1tfkl";
 
-const supabaseClient = supabase.createClient(
+const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
@@ -257,29 +283,53 @@ function formatarCPF(valor){
 }
 
 document.getElementById('cpfPaciente').addEventListener('input', function(){
+
     this.value = formatarCPF(this.value);
+
 });
 
 document.getElementById('cpfAcompanhante').addEventListener('input', function(){
+
     this.value = formatarCPF(this.value);
+
 });
 
 async function salvarAgendamento(){
 
+    console.log("BOTÃO FUNCIONOU");
+
     const paciente = document.getElementById('paciente').value;
+
     const cpfPaciente = document.getElementById('cpfPaciente').value;
+
     const acompanhante = document.getElementById('acompanhante').value;
+
     const cpfAcompanhante = document.getElementById('cpfAcompanhante').value;
+
     const procedimento = document.getElementById('procedimento').value;
+
     const cidade = document.getElementById('cidade').value;
+
     const local = document.getElementById('local').value;
-    const data = document.getElementById('data').value;
+
+    const dataAgendamento = document.getElementById('dataAgendamento').value;
+
     const horario = document.getElementById('horario').value;
+
     const telefone = document.getElementById('telefone').value;
 
-    if(!paciente || !cpfPaciente || !procedimento || !cidade || !local || !data || !horario || !telefone){
+    if(
+        !paciente ||
+        !cpfPaciente ||
+        !procedimento ||
+        !cidade ||
+        !local ||
+        !dataAgendamento ||
+        !horario ||
+        !telefone
+    ){
 
-        alert("Preencha os campos obrigatórios");
+        alert("Preencha todos os campos obrigatórios");
         return;
 
     }
@@ -289,35 +339,72 @@ async function salvarAgendamento(){
     .insert([{
 
         paciente,
+
         cpf_paciente:cpfPaciente,
+
         acompanhante,
+
         cpf_acompanhante:cpfAcompanhante,
+
         procedimento,
+
         cidade,
+
         local_atendimento:local,
-        data,
+
+        data:dataAgendamento,
+
         horario,
+
         telefone
 
     }]);
 
     if(error){
 
-        alert("Erro ao salvar");
         console.log(error);
+
+        alert("Erro ao salvar");
         return;
 
     }
 
     alert("Agendamento salvo!");
 
+    limparCampos();
+
     carregarAgendamentos();
+
+}
+
+function limparCampos(){
+
+    document.getElementById('paciente').value = '';
+
+    document.getElementById('cpfPaciente').value = '';
+
+    document.getElementById('acompanhante').value = '';
+
+    document.getElementById('cpfAcompanhante').value = '';
+
+    document.getElementById('procedimento').value = '';
+
+    document.getElementById('cidade').value = '';
+
+    document.getElementById('local').value = '';
+
+    document.getElementById('dataAgendamento').value = '';
+
+    document.getElementById('horario').value = '';
+
+    document.getElementById('telefone').value = '';
 
 }
 
 async function carregarAgendamentos(){
 
     const filtroCidade = document.getElementById('filtroCidade').value;
+
     const filtroData = document.getElementById('filtroData').value;
 
     let query = supabaseClient
@@ -338,7 +425,7 @@ async function carregarAgendamentos(){
 
     }
 
-    const { data, error } = await query;
+    const { data:agendamentos, error } = await query;
 
     if(error){
 
@@ -347,11 +434,55 @@ async function carregarAgendamentos(){
 
     }
 
+    const listaDatas = document.getElementById('listaDatas');
+
+    listaDatas.innerHTML = '';
+
+    const agrupados = {};
+
+    agendamentos.forEach(item=>{
+
+        if(!agrupados[item.data]){
+
+            agrupados[item.data] = [];
+
+        }
+
+        agrupados[item.data].push(item);
+
+    });
+
+    Object.keys(agrupados).forEach(data=>{
+
+        listaDatas.innerHTML += `
+
+        <div class="pasta" onclick="abrirData('${data}')">
+
+            <h3>📁 ${data}</h3>
+
+            <p>
+                ${agrupados[data].length} pacientes
+            </p>
+
+        </div>
+
+        `;
+
+    });
+
+    window.agendamentosAgrupados = agrupados;
+
+}
+
+function abrirData(data){
+
     const lista = document.getElementById('lista');
 
     lista.innerHTML = '';
 
-    data.forEach(item=>{
+    const pacientes = window.agendamentosAgrupados[data];
+
+    pacientes.forEach(item=>{
 
         lista.innerHTML += `
 
@@ -360,13 +491,21 @@ async function carregarAgendamentos(){
             <div class="item-topo">
 
                 <div>
-                    <div class="horario">${item.horario}</div>
-                    <div class="paciente">${item.paciente}</div>
+
+                    <div class="horario">
+                        ${item.horario}
+                    </div>
+
+                    <div class="paciente">
+                        ${item.paciente}
+                    </div>
+
                 </div>
 
                 <div>
-                    <strong>${item.cidade}</strong><br>
-                    ${item.data}
+
+                    <strong>${item.cidade}</strong>
+
                 </div>
 
             </div>
@@ -405,6 +544,22 @@ async function carregarAgendamentos(){
 
             </div>
 
+            <div class="botoes">
+
+                <button
+                class="btn-editar"
+                onclick="editarPaciente(${item.id})">
+                    ✏️ Editar
+                </button>
+
+                <button
+                class="btn-excluir"
+                onclick="excluirPaciente(${item.id})">
+                    🗑 Excluir
+                </button>
+
+            </div>
+
         </div>
 
         `;
@@ -413,9 +568,72 @@ async function carregarAgendamentos(){
 
 }
 
+async function excluirPaciente(id){
+
+    const confirmar = confirm(
+        "Deseja excluir este paciente?"
+    );
+
+    if(!confirmar) return;
+
+    const { error } = await supabaseClient
+    .from('agendamentos')
+    .delete()
+    .eq('id', id);
+
+    if(error){
+
+        console.log(error);
+
+        alert("Erro ao excluir");
+        return;
+
+    }
+
+    alert("Paciente excluído!");
+
+    carregarAgendamentos();
+
+    document.getElementById('lista').innerHTML = '';
+
+}
+
+async function editarPaciente(id){
+
+    const novoNome = prompt(
+        "Digite o novo nome do paciente:"
+    );
+
+    if(!novoNome) return;
+
+    const { error } = await supabaseClient
+    .from('agendamentos')
+    .update({
+
+        paciente:novoNome
+
+    })
+    .eq('id', id);
+
+    if(error){
+
+        console.log(error);
+
+        alert("Erro ao editar");
+        return;
+
+    }
+
+    alert("Paciente atualizado!");
+
+    carregarAgendamentos();
+
+}
+
 async function gerarPDF(){
 
     const filtroCidade = document.getElementById('filtroCidade').value;
+
     const filtroData = document.getElementById('filtroData').value;
 
     let query = supabaseClient
@@ -435,7 +653,7 @@ async function gerarPDF(){
 
     }
 
-    const { data } = await query;
+    const { data:agendamentos } = await query;
 
     const { jsPDF } = window.jspdf;
 
@@ -447,16 +665,30 @@ async function gerarPDF(){
 
     doc.setFontSize(12);
 
-    doc.text(`Cidade: ${filtroCidade || 'Todas'}`, 14, 30);
-    doc.text(`Data: ${filtroData || 'Todas'}`, 14, 38);
+    doc.text(
+        `Cidade: ${filtroCidade || 'Todas'}`,
+        14,
+        30
+    );
 
-    const tabela = data.map(item => [
+    doc.text(
+        `Data: ${filtroData || 'Todas'}`,
+        14,
+        38
+    );
+
+    const tabela = agendamentos.map(item => [
 
         item.horario,
+
         item.paciente,
+
         item.cpf_paciente,
+
         item.acompanhante || '-',
+
         item.telefone,
+
         item.procedimento
 
     ]);
@@ -482,8 +714,11 @@ async function gerarPDF(){
 
 }
 
-document.getElementById('filtroCidade').addEventListener('input', carregarAgendamentos);
-document.getElementById('filtroData').addEventListener('change', carregarAgendamentos);
+document.getElementById('filtroCidade')
+.addEventListener('input', carregarAgendamentos);
+
+document.getElementById('filtroData')
+.addEventListener('change', carregarAgendamentos);
 
 carregarAgendamentos();
 
