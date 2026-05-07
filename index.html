@@ -228,6 +228,11 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
+    const logo1 = new Image();
+logo1.src = "foto.png";
+
+const logo2 = new Image();
+logo2.src = "foto2.png";
 
 let PERFIL = "visitante";
 
@@ -756,18 +761,21 @@ const { data:agendamentos } = await supabaseClient
 
 const { jsPDF } = window.jspdf;
 
-const doc = new jsPDF();
-    const logo1 = new Image();
+const doc = new jsPDF({
+    compress: true
+});
 
-logo1.src = "foto.png";
+  if(logo1.complete){
 
-const logo2 = new Image();
-
-logo2.src = "foto2.png";
     doc.addImage(logo1, 'PNG', 10, 6, 38, 18);
 
-doc.addImage(logo2, 'PNG', 157, 6, 38, 18);
+}
 
+if(logo2.complete){
+
+    doc.addImage(logo2, 'PNG', 157, 6, 38, 18);
+
+}
 doc.setFontSize(16);
 
 doc.setTextColor(25,135,84);
@@ -848,19 +856,22 @@ async function gerarPDFHospedagem(id){
 
     const { jsPDF } = window.jspdf;
 
-    const doc = new jsPDF();
-    const logo1 = new Image();
-
-logo1.src = "foto.png";
-
-const logo2 = new Image();
-
-logo2.src = "foto2.png";
+   const doc = new jsPDF({
+    compress: true
+});
+   
+if(logo1.complete){
 
     doc.addImage(logo1, 'PNG', 10, 6, 38, 18);
 
-doc.addImage(logo2, 'PNG', 157, 6, 38, 18);
+}
 
+if(logo2.complete){
+
+    doc.addImage(logo2, 'PNG', 157, 6, 38, 18);
+
+}
+  
 doc.setFontSize(16);
 
 doc.setTextColor(25,135,84);
