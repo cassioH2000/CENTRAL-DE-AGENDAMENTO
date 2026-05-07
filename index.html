@@ -807,36 +807,75 @@ async function gerarPDFHospedagem(id){
     const { jsPDF } = window.jspdf;
 
     const doc = new jsPDF();
+    const logo1 = new Image();
 
-    doc.setFontSize(22);
+logo1.src = "foto.png";
 
-    doc.text("HOSPEDAGEM", 70, 20);
+const logo2 = new Image();
+
+logo2.src = "foto2.png";
+
+    doc.addImage(logo1, 'PNG', 14, 8, 22, 22);
+
+doc.addImage(logo2, 'PNG', 170, 8, 22, 22);
+
+doc.setFontSize(20);
+
+doc.setTextColor(25,135,84);
+
+doc.text("SECRETARIA MUNICIPAL DE SAÚDE", 45, 18);
+
+doc.setFontSize(12);
+
+doc.setTextColor(100);
+
+doc.text(
+"Transportando vidas com responsabilidade",
+45,
+28
+);
+
+doc.setDrawColor(200);
+
+doc.line(14, 38, 195, 38);
+
+doc.setFontSize(22);
+
+doc.setTextColor(0);
+
+doc.text("HOSPEDAGEM", 70, 50);
 
     doc.setFontSize(14);
 
-    doc.text(`Nome do Paciente: ${item.paciente}`, 14, 45);
+    doc.text(`Nome do Paciente: ${item.paciente}`, 14, 70);
 
-    doc.text(`CPF: ${item.cpf_paciente}`, 14, 60);
+    doc.text(`CPF: ${item.cpf_paciente}`, 14, 85);
 
-    doc.text(`Telefone: ${item.telefone}`, 14, 75);
+    doc.text(`Telefone: ${item.telefone}`, 14, 100);
 
-    doc.text(
-        `Acompanhante: ${item.acompanhante || 'Sem acompanhante'}`,
-        14,
-        90
-    );
+   doc.text(
+`Acompanhante: ${item.acompanhante || 'Sem acompanhante'}`,
+14,
+115
+);
 
-    doc.line(14, 120, 90, 120);
+doc.text(
+`CPF Acompanhante: ${item.cpf_acompanhante || '-'}`,
+14,
+130
+);
 
-    doc.text("Data de Chegada", 14, 128);
+    doc.line(14, 160, 90, 160);
 
-    doc.line(110, 120, 190, 120);
+    doc.text("Data de Chegada", 14, 168);
 
-    doc.text("Data de Saída", 120, 128);
+    doc.line(110, 160, 190, 160);
 
-    doc.line(40, 200, 170, 200);
+    doc.text("Data de Saída", 120, 168);
 
-    doc.text("Assinatura do Paciente", 70, 210);
+    doc.line(40, 230, 170, 230);
+
+    doc.text("Assinatura do Paciente", 70, 240);
 
     doc.save(`Hospedagem-${item.paciente}.pdf`);
 
