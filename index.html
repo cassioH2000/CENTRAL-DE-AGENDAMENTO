@@ -715,12 +715,22 @@ const { data:agendamentos } = await supabaseClient
 const { jsPDF } = window.jspdf;
 
 const doc = new jsPDF();
+    const logo1 = new Image();
+
+logo1.src = "foto.png";
+
+const logo2 = new Image();
+
+logo2.src = "foto2.png";
+    doc.addImage(logo1, 'PNG', 14, 8, 22, 22);
+
+doc.addImage(logo2, 'PNG', 170, 8, 22, 22);
 
 doc.setFontSize(20);
 
 doc.setTextColor(25,135,84);
 
-doc.text("SECRETARIA MUNICIPAL DE SAÚDE", 14, 18);
+doc.text("SECRETARIA MUNICIPAL DE SAÚDE", 45, 18);
 
 doc.setFontSize(12);
 
@@ -743,8 +753,8 @@ doc.setTextColor(0);
 doc.text("LISTA DE PACIENTES", 14, 45);
 
 doc.setFontSize(12);
-doc.text(`Cidade: ${cidade}`, 14, 30);
-doc.text(`Data: ${data}`, 14, 38);
+doc.text(`Cidade: ${cidade}`, 14, 52);
+doc.text(`Data: ${data}`, 14, 60);
 
 const tabela = agendamentos.map(item => [
 
@@ -769,7 +779,7 @@ head:[[
 ]],
 
 body:tabela,
-startY:50
+startY:70
 
 });
 
