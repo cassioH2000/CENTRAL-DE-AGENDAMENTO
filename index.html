@@ -716,8 +716,31 @@ const { jsPDF } = window.jspdf;
 
 const doc = new jsPDF();
 
+doc.setFontSize(20);
+
+doc.setTextColor(25,135,84);
+
+doc.text("SECRETARIA MUNICIPAL DE SAÚDE", 14, 18);
+
+doc.setFontSize(12);
+
+doc.setTextColor(100);
+
+doc.text(
+"Transportando vidas com responsabilidade",
+14,
+26
+);
+
+doc.setDrawColor(200);
+
+doc.line(14, 32, 195, 32);
+
 doc.setFontSize(18);
-doc.text("LISTA DE PACIENTES", 14, 20);
+
+doc.setTextColor(0);
+
+doc.text("LISTA DE PACIENTES", 14, 45);
 
 doc.setFontSize(12);
 doc.text(`Cidade: ${cidade}`, 14, 30);
