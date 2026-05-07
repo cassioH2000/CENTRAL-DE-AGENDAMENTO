@@ -182,7 +182,7 @@ button:hover{
 <h1>📋 Sistema de Agendamento</h1>
 </div>
 
-<div class="card">
+<div class="card" id="cardCadastro">
 
 <h2 style="margin-bottom:20px;">
 Novo Agendamento
@@ -228,7 +228,10 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
-
+const PERFIL = "visitante";
+// visitante = só vê e gera PDF
+// admin = pode salvar, editar e excluir
+    
 function formatarCPF(valor){
 
     valor = valor.replace(/\D/g,'');
@@ -532,11 +535,13 @@ ${item.data}
 
 <div class="botoes">
 
+${PERFIL === "admin" ? `
 <button
 class="btn-editar"
 onclick="editarPaciente(${item.id})">
 ✏️ Editar
 </button>
+` : ''}
 
 <button
 style="
@@ -549,13 +554,13 @@ onclick="gerarPDFHospedagem(${item.id})">
 
 </button>
 
-
-
+${PERFIL === "admin" ? `
 <button
 class="btn-excluir"
 onclick="excluirPaciente(${item.id})">
 🗑 Excluir
 </button>
+` : ''}
 
 </div>
 
@@ -878,6 +883,12 @@ doc.text(
     doc.text("Assinatura do Paciente", 70, 240);
 
     doc.save(`Hospedagem-${item.paciente}.pdf`);
+
+}
+    if(PERFIL === "visitante"){
+
+    document.getElementById('cardCadastro')
+    .style.display = 'none';
 
 }
 carregarAgendamentos();
