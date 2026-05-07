@@ -228,10 +228,39 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
-const PERFIL = "visitante";
-// visitante = só vê e gera PDF
-// admin = pode salvar, editar e excluir
-    
+let PERFIL = "visitante";
+
+const tipoUsuario = prompt(
+"Digite:\n\nADMIN\nou\nVISITANTE"
+);
+
+if(tipoUsuario){
+
+    if(tipoUsuario.toLowerCase() === "admin"){
+
+        const senha = prompt(
+        "Digite a senha do administrador"
+        );
+
+        if(senha === "saude2026"){
+
+            PERFIL = "admin";
+
+        }else{
+
+            alert("Senha incorreta!");
+
+            PERFIL = "visitante";
+
+        }
+
+    }else{
+
+        PERFIL = "visitante";
+
+    }
+
+}
 function formatarCPF(valor){
 
     valor = valor.replace(/\D/g,'');
