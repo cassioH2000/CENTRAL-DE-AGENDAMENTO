@@ -228,23 +228,31 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
+
 let PERFIL = "visitante";
 
-const tipoUsuario = prompt(
-"Digite:\n\nADMIN\nou\nVISITANTE"
-);
+setTimeout(() => {
 
-if(tipoUsuario){
+    const escolha = confirm(
+        "Clique em OK para ADMIN\n\nClique em Cancelar para VISITANTE"
+    );
 
-    if(tipoUsuario.toLowerCase() === "admin"){
+    if(escolha){
 
         const senha = prompt(
-        "Digite a senha do administrador"
+            "Digite a senha do administrador"
         );
 
         if(senha === "saude2026"){
 
             PERFIL = "admin";
+
+            alert("Modo administrador ativado");
+
+            document.getElementById('cardCadastro')
+            .style.display = 'block';
+
+            carregarAgendamentos();
 
         }else{
 
@@ -254,13 +262,10 @@ if(tipoUsuario){
 
         }
 
-    }else{
-
-        PERFIL = "visitante";
-
     }
 
-}
+}, 300);
+    
 function formatarCPF(valor){
 
     valor = valor.replace(/\D/g,'');
@@ -282,6 +287,7 @@ document.getElementById('cpfAcompanhante').addEventListener('input', function(){
 });
 
 async function salvarAgendamento(){
+    if(PERFIL !== "admin") return;
 
     const paciente = document.getElementById('paciente').value;
     const cpfPaciente = document.getElementById('cpfPaciente').value;
@@ -661,6 +667,7 @@ if(elemento.style.display === 'none'){
 }
 
 async function excluirPaciente(id){
+    if(PERFIL !== "admin") return;
 
 const confirmar = confirm("Deseja excluir este paciente?");
 
@@ -678,6 +685,7 @@ carregarAgendamentos();
 }
 
 async function editarPaciente(id){
+    if(PERFIL !== "admin") return;
 
 const { data:paciente } = await supabaseClient
 .from('agendamentos')
@@ -914,10 +922,15 @@ doc.text(
     doc.save(`Hospedagem-${item.paciente}.pdf`);
 
 }
-    if(PERFIL === "visitante"){
+  if(PERFIL === "visitante"){
 
     document.getElementById('cardCadastro')
     .style.display = 'none';
+
+}else{
+
+    document.getElementById('cardCadastro')
+    .style.display = 'block';
 
 }
 carregarAgendamentos();
