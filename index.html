@@ -200,6 +200,7 @@ Novo Agendamento
 <input type="date" id="dataAgendamento">
 <input type="time" id="horario">
 <input type="text" id="telefone" placeholder="Telefone">
+<input type="text" id="observacoes" placeholder="Observações">
 
 </div>
 
@@ -304,6 +305,7 @@ async function salvarAgendamento(){
     const dataAgendamento = document.getElementById('dataAgendamento').value;
     const horario = document.getElementById('horario').value;
     const telefone = document.getElementById('telefone').value;
+    const observacoes = document.getElementById('observacoes').value;
 
     const { error } = await supabaseClient
     .from('agendamentos')
@@ -318,7 +320,9 @@ async function salvarAgendamento(){
         local_atendimento:local,
         data:dataAgendamento,
         horario,
-        telefone
+        telefone,
+        observacoes
+        
 
     }]);
 
@@ -359,6 +363,7 @@ function limparCampos(){
     document.getElementById('horario').value = '';
 
     document.getElementById('telefone').value = '';
+    document.getElementById('observacoes').value = '';
 
 }
 async function carregarAgendamentos(){
@@ -566,6 +571,11 @@ ${item.telefone}
 </div>
 
 <div>
+<strong>Observações</strong><br>
+${item.observacoes || '-'}
+</div>
+
+<div>
 <strong>Data</strong><br>
 ${item.data}
 </div>
@@ -709,6 +719,8 @@ document.getElementById('editarLocal').value = paciente.local_atendimento;
 document.getElementById('editarData').value = paciente.data;
 document.getElementById('editarHorario').value = paciente.horario;
 document.getElementById('editarTelefone').value = paciente.telefone;
+document.getElementById('editarObservacoes').value =
+paciente.observacoes || '';
 
 document.getElementById('modalEditar').style.display = 'flex';
 
@@ -737,8 +749,10 @@ cidade:document.getElementById('editarCidade').value,
 local_atendimento:document.getElementById('editarLocal').value,
 data:document.getElementById('editarData').value,
 horario:document.getElementById('editarHorario').value,
-telefone:document.getElementById('editarTelefone').value
+telefone:document.getElementById('editarTelefone').value,
 
+observacoes:
+document.getElementById('editarObservacoes').value
 })
 .eq('id', id);
 
@@ -813,7 +827,8 @@ item.paciente,
 item.cpf_paciente,
 item.acompanhante || '-',
 item.telefone,
-item.procedimento
+item.procedimento,
+item.observacoes || '-'
 
 ]);
 
@@ -825,7 +840,8 @@ head:[[
 'CPF',
 'Acompanhante',
 'Telefone',
-'Procedimento'
+'Procedimento',
+'Observações'
 ]],
 
 body:tabela,
@@ -917,6 +933,11 @@ doc.text(
 14,
 130
 );
+    doc.text(
+`Observações: ${item.observacoes || '-'}`,
+14,
+145
+);
 
     doc.line(14, 160, 90, 160);
 
@@ -1005,6 +1026,7 @@ X
 <input type="date" id="editarData">
 <input type="time" id="editarHorario">
 <input type="text" id="editarTelefone" placeholder="Telefone">
+<input type="text" id="editarObservacoes" placeholder="Observações">
 
 </div>
 
