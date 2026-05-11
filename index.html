@@ -776,8 +776,10 @@ const { data:agendamentos } = await supabaseClient
 const { jsPDF } = window.jspdf;
 
 const doc = new jsPDF({
-    compress: true
+    orientation:'landscape',
+    compress:true
 });
+
 
   if(logo1.complete){
 
@@ -827,7 +829,7 @@ item.paciente,
 item.cpf_paciente,
 item.acompanhante || '-',
 item.telefone,
-item.procedimento,
+item.local_atendimento,
 item.observacoes || '-'
 
 ]);
@@ -840,12 +842,12 @@ head:[[
 'CPF',
 'Acompanhante',
 'Telefone',
-'Procedimento',
+'Local',
 'Observações'
 ]],
 
 body:tabela,
-startY:70
+startY:60
 
 });
 
