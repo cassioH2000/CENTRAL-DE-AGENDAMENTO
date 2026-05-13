@@ -494,6 +494,22 @@ font-weight:600;
 📄 Gerar PDF
 
 </button>
+<button
+onclick="event.stopPropagation(); gerarGuiaMotorista('${data}','${cidade}')"
+style="
+background:#198754;
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
+margin-left:10px;
+">
+
+🚐 Guia Motorista
+
+</button>
 
 </div>
 
@@ -965,6 +981,48 @@ doc.text(
 
     document.getElementById('cardCadastro')
     .style.display = 'block';
+
+}
+ async function gerarGuiaMotorista(data,cidade){
+
+    const { data:agendamentos, error } = await supabaseClient
+    .from('agendamentos')
+    .select('*')
+    .eq('data', data)
+    .eq('cidade', cidade)
+    .order('horario',{ascending:true});
+
+    if(error){
+        console.log(error);
+        alert("Erro ao gerar guia");
+        return;
+    }
+
+    let texto = `GUIA DO MOTORISTA\n`;
+    texto += `Cidade: ${cidade}\n`;
+    texto += `Data: ${data}\n`;
+    texto += `\n==============================\n\n`;
+
+    agendamentos.forEach(item=>{
+
+        texto += `PACIENTE: ${item.paciente}\n`;
+        texto += `ACOMPANHANTE: ${item.acompanhante || 'Sem acompanhante'}\n`;
+        texto += `TELEFONE: ${item.telefone}\n`;
+        texto += `\n------------------------------\n\n`;
+
+    });
+
+    const arquivo = new Blob([texto], {
+        type: 'text/plain;charset=utf-8'
+    });
+
+    const link = document.createElement('a');
+
+    link.href = URL.createObjectURL(arquivo);
+
+    link.download = `Guia-Motorista-${cidade}-${data}.txt`;
+
+    link.click();
 
 }
 carregarAgendamentos();
