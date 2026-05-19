@@ -196,6 +196,36 @@ Novo Agendamento
 <input type="text" id="cpfAcompanhante" placeholder="CPF do Acompanhante">
 <input type="text" id="procedimento" placeholder="Procedimento">
 <input type="text" id="cidade" placeholder="Cidade">
+<select id="embarque" style="
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid #ccc;
+font-size:15px;
+background:white;
+">
+
+<option value="">
+Selecione o Local de Embarque
+</option>
+
+<option value="Posto do Centro">
+Posto do Centro
+</option>
+
+<option value="Farmácia de Caio">
+Farmácia de Caio
+</option>
+
+<option value="Américo Chagas">
+Américo Chagas
+</option>
+
+<option value="Em Casa">
+Em Casa
+</option>
+
+</select>
 <input type="text" id="local" placeholder="Local de Atendimento">
 <input type="date" id="dataAgendamento">
 <input type="time" id="horario">
@@ -301,6 +331,7 @@ async function salvarAgendamento(){
     const cpfAcompanhante = document.getElementById('cpfAcompanhante').value;
     const procedimento = document.getElementById('procedimento').value;
     const cidade = document.getElementById('cidade').value.trim();
+    const embarque = document.getElementById('embarque').value;
     const local = document.getElementById('local').value;
     const dataAgendamento = document.getElementById('dataAgendamento').value;
     const horario = document.getElementById('horario').value;
@@ -317,6 +348,7 @@ async function salvarAgendamento(){
         cpf_acompanhante:cpfAcompanhante,
         procedimento,
         cidade,
+        embarque,
         local_atendimento:local,
         data:dataAgendamento,
         horario,
@@ -363,6 +395,9 @@ function limparCampos(){
     document.getElementById('horario').value = '';
 
     document.getElementById('telefone').value = '';
+    
+    document.getElementById('embarque').value = '';
+    
     document.getElementById('observacoes').value = '';
 
 }
@@ -595,6 +630,10 @@ ${item.local_atendimento}
 <strong>Telefone</strong><br>
 ${item.telefone}
 </div>
+<div>
+<strong>Local de Embarque</strong><br>
+${item.embarque || '-'}
+</div>
 
 <div>
 <strong>Observações</strong><br>
@@ -741,6 +780,8 @@ document.getElementById('editarAcompanhante').value = paciente.acompanhante || '
 document.getElementById('editarCpfAcompanhante').value = paciente.cpf_acompanhante || '';
 document.getElementById('editarProcedimento').value = paciente.procedimento;
 document.getElementById('editarCidade').value = paciente.cidade;
+document.getElementById('editarEmbarque').value =
+paciente.embarque || '';
 document.getElementById('editarLocal').value = paciente.local_atendimento;
 document.getElementById('editarData').value = paciente.data;
 document.getElementById('editarHorario').value = paciente.horario;
@@ -772,6 +813,8 @@ acompanhante:document.getElementById('editarAcompanhante').value,
 cpf_acompanhante:document.getElementById('editarCpfAcompanhante').value,
 procedimento:document.getElementById('editarProcedimento').value,
 cidade:document.getElementById('editarCidade').value,
+embarque:
+document.getElementById('editarEmbarque').value,
 local_atendimento:document.getElementById('editarLocal').value,
 data:document.getElementById('editarData').value,
 horario:document.getElementById('editarHorario').value,
@@ -855,7 +898,7 @@ item.paciente,
 item.cpf_paciente,
 item.acompanhante || '-',
 item.telefone,
-item.local_atendimento,
+item.embarque || '-',
 item.observacoes || '-'
 
 ]);
@@ -868,7 +911,7 @@ head:[[
 'CPF',
 'Acompanhante',
 'Telefone',
-'Local',
+'Embarque',
 'Observações'
 ]],
 
@@ -1092,6 +1135,36 @@ X
 <input type="text" id="editarCpfAcompanhante" placeholder="CPF do Acompanhante">
 <input type="text" id="editarProcedimento" placeholder="Procedimento">
 <input type="text" id="editarCidade" placeholder="Cidade">
+<select id="editarEmbarque" style="
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid #ccc;
+font-size:15px;
+background:white;
+">
+
+<option value="">
+Selecione o Local de Embarque
+</option>
+
+<option value="Posto do Centro">
+Posto do Centro
+</option>
+
+<option value="Farmácia de Caio">
+Farmácia de Caio
+</option>
+
+<option value="Américo Chagas">
+Américo Chagas
+</option>
+
+<option value="Em Casa">
+Em Casa
+</option>
+
+</select>
 <input type="text" id="editarLocal" placeholder="Local de Atendimento">
 <input type="date" id="editarData">
 <input type="time" id="editarHorario">
