@@ -890,35 +890,55 @@ doc.text("LISTA DE PACIENTES", 14, 45);
 doc.setFontSize(12);
 doc.text(`Cidade: ${cidade}`, 14, 52);
 doc.text(`Data: ${data}`, 14, 60);
+doc.setFontSize(11);
+
+doc.text(
+"A Secretaria Municipal de Saúde de Wagner está transportando para a cidade de Salvador os pacientes abaixo relacionados com o objetivo de realizar procedimentos médicos (exames, consultas e cirurgias) que não são ofertados em nosso município e cidades circunvizinhas.",
+14,
+72,
+{
+maxWidth:260
+}
+);
 
 const tabela = agendamentos.map(item => [
 
-item.horario,
 item.paciente,
-item.cpf_paciente,
 item.acompanhante || '-',
 item.telefone,
+item.local_atendimento || '-',
 item.embarque || '-',
 item.observacoes || '-'
 
 ]);
 
+
+
 doc.autoTable({
 
 head:[[
-'Horário',
 'Paciente',
-'CPF',
 'Acompanhante',
 'Telefone',
+'Local',
 'Embarque',
 'Observações'
 ]],
 
 body:tabela,
-startY:60
+startY:95
 
 });
+
+doc.line(90, 185, 200, 185);
+
+doc.setFontSize(11);
+
+doc.text(
+"Secretaria Municipal de Saúde",
+115,
+192
+);
 
 doc.save(`Pacientes-${cidade}-${data}.pdf`);
 
