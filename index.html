@@ -188,6 +188,7 @@ button:hover{
 Novo Agendamento
 </h2>
 
+
 <div class="grid">
 
 <input type="text" id="paciente" placeholder="Nome do Paciente">
@@ -246,6 +247,25 @@ Salvar Agendamento
 Datas Agendadas
 </h2>
 
+<div style="
+margin-bottom:20px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+">
+
+<input
+type="text"
+id="filtroPaciente"
+placeholder="Pesquisar paciente"
+style="
+max-width:350px;
+"
+oninput="carregarAgendamentos()"
+>
+
+</div>
+    
 <div id="listaDatas"></div>
 
 </div>
@@ -402,12 +422,22 @@ function limparCampos(){
 
 }
 async function carregarAgendamentos(){
+    const filtroPaciente =
+document.getElementById('filtroPaciente').value;
 
     let query = supabaseClient
     .from('agendamentos')
     .select('*')
     .order('data',{ascending:true})
     .order('horario',{ascending:true});
+    if(filtroPaciente){
+
+    query = query.ilike(
+        'paciente',
+        `%${filtroPaciente}%`
+    );
+
+}
 
     const { data:agendamentos, error } = await query;
 
