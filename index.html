@@ -422,22 +422,24 @@ function limparCampos(){
 
 }
 async function carregarAgendamentos(){
+
     const filtroPaciente =
-document.getElementById('filtroPaciente').value;
+    document.getElementById('filtroPaciente').value;
 
     let query = supabaseClient
     .from('agendamentos')
     .select('*')
     .order('data',{ascending:true})
     .order('horario',{ascending:true});
+
     if(filtroPaciente){
 
-    query = query.ilike(
-        'paciente',
-        `%${filtroPaciente}%`
-    );
+        query = query.ilike(
+            'paciente',
+            `%${filtroPaciente}%`
+        );
 
-}
+    }
 
     const { data:agendamentos, error } = await query;
 
@@ -448,315 +450,436 @@ document.getElementById('filtroPaciente').value;
 
     }
 
-    const listaDatas = document.getElementById('listaDatas');
+    const listaDatas =
+    document.getElementById('listaDatas');
 
     listaDatas.innerHTML = '';
 
+    const hoje = new Date();
+
+    hoje.setHours(0,0,0,0);
+
     const agrupados = {};
+
+    const agrupadosPassados = {};
 
     agendamentos.forEach(item=>{
 
-        if(!agrupados[item.data]){
+        const dataItem =
+        new Date(item.data + 'T00:00:00');
 
-            agrupados[item.data] = [];
+        if(dataItem.getTime() < hoje.getTime()){
 
-        }
+            if(!agrupadosPassados[item.data]){
 
-        agrupados[item.data].push(item);
-
-    });
-
-    Object.keys(agrupados).forEach(data=>{
-
-        const pacientes = agrupados[data];
-
-        const cidadesAgrupadas = {};
-
-        pacientes.forEach(item=>{
-
-            if(!cidadesAgrupadas[item.cidade]){
-
-                cidadesAgrupadas[item.cidade] = [];
+                agrupadosPassados[item.data] = [];
 
             }
 
-            cidadesAgrupadas[item.cidade].push(item);
+            agrupadosPassados[item.data].push(item);
+
+        }else{
+
+            if(!agrupados[item.data]){
+
+                agrupados[item.data] = [];
+
+            }
+
+            agrupados[item.data].push(item);
+
+        }
+
+    });
+
+    Object.keys(agrupados)
+    .sort((a,b)=> new Date(a) - new Date(b))
+    .forEach(data=>{
+
+        montarData(
+            data,
+            agrupados[data],
+            listaDatas
+        );
+
+    });
+
+    if(Object.keys(agrupadosPassados).length > 0){
+
+        let conteudoPassados = '';
+
+        Object.keys(agrupadosPassados)
+        .sort((a,b)=> new Date(b) - new Date(a))
+        .forEach(data=>{
+
+            conteudoPassados += `
+
+            <div class="pasta" style="
+            background:white;
+            color:#111;
+            ">
+
+                <div
+                onclick="toggleData('passada-${data.replaceAll('-','')}')"
+                style="
+                cursor:pointer;
+                ">
+
+                    <h3>
+                    📅 ${data}
+                    </h3>
+
+                    <p>
+                    ${agrupadosPassados[data].length} pacientes
+                    </p>
+
+                </div>
+
+                <div
+                id="passada-${data.replaceAll('-','')}"
+                style="
+                display:none;
+                margin-top:20px;
+                ">
+
+                    ${montarConteudoData(
+                        data,
+                        agrupadosPassados[data]
+                    )}
+
+                </div>
+
+            </div>
+
+            `;
 
         });
 
-        let conteudoPacientes = '';
+        listaDatas.innerHTML += `
 
-        Object.keys(cidadesAgrupadas).forEach(cidade=>{
+        <div class="pasta" style="
+        background:#6c757d;
+        color:white;
+        margin-top:30px;
+        ">
+
+            <div
+            onclick="toggleData('viagens-passadas')"
+            style="
+            cursor:pointer;
+            ">
+
+                <h2 style="
+                font-size:22px;
+                ">
+                📁 Viagens Passadas
+                </h2>
+
+                <p>
+                Clique para visualizar
+                </p>
+
+            </div>
+
+            <div
+            id="viagens-passadas"
+            style="
+            display:none;
+            margin-top:20px;
+            ">
+
+                ${conteudoPassados}
+
+            </div>
+
+        </div>
+
+        `;
+
+    }
+
+}
+    function montarData(data, pacientes, listaDatas){
+
+    listaDatas.innerHTML += `
+
+    <div class="pasta">
+
+        <div
+        onclick="toggleData('conteudo-${data.replaceAll('-','')}')"
+        style="cursor:pointer;">
+
+            <h3>📁 ${data}</h3>
+
+            <p>
+            ${pacientes.length} pacientes
+            </p>
+
+        </div>
+
+        <div
+        id="conteudo-${data.replaceAll('-','')}"
+        style="
+        display:none;
+        margin-top:20px;
+        ">
+
+            ${montarConteudoData(data, pacientes)}
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+function montarConteudoData(data, pacientes){
+
+    const cidadesAgrupadas = {};
+
+    pacientes.forEach(item=>{
+
+        if(!cidadesAgrupadas[item.cidade]){
+
+            cidadesAgrupadas[item.cidade] = [];
+
+        }
+
+        cidadesAgrupadas[item.cidade].push(item);
+
+    });
+
+    let conteudoPacientes = '';
+
+    Object.keys(cidadesAgrupadas).forEach(cidade=>{
+
+        conteudoPacientes += `
+
+        <div style="
+        background:#ffffff;
+        color:#111;
+        padding:18px;
+        border-radius:16px;
+        margin-top:20px;
+        margin-bottom:15px;
+        border:2px solid #e5e7eb;
+        box-shadow:0 4px 10px rgba(0,0,0,0.05);
+        ">
+
+        <div
+        onclick="toggleData('cidade-${data.replaceAll('-','')}-${cidade}')"
+        style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        flex-wrap:wrap;
+        gap:15px;
+        cursor:pointer;
+        ">
+
+            <div>
+
+                <h2>📁 ${cidade}</h2>
+
+                <p>
+
+                ${cidadesAgrupadas[cidade].length} pacientes
+
+                <br>
+
+                ${cidadesAgrupadas[cidade].filter(p =>
+                p.acompanhante && p.acompanhante.trim() !== ''
+                ).length} acompanhantes
+
+                <br><br>
+
+                <strong>
+
+                ${
+                cidadesAgrupadas[cidade].length +
+
+                cidadesAgrupadas[cidade].filter(p =>
+                p.acompanhante && p.acompanhante.trim() !== ''
+                ).length
+
+                } pessoas no total
+
+                </strong>
+
+                </p>
+
+            </div>
+
+            <div style="
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            ">
+
+                <button
+                onclick="event.stopPropagation(); gerarPDFCidade('${data}','${cidade}')"
+                style="
+                background:#1f8bff;
+                color:white;
+                border:none;
+                padding:12px 18px;
+                border-radius:12px;
+                cursor:pointer;
+                font-weight:600;
+                ">
+                📄 Gerar PDF
+                </button>
+
+                <button
+                onclick="event.stopPropagation(); gerarGuiaMotorista('${data}','${cidade}')"
+                style="
+                background:#198754;
+                color:white;
+                border:none;
+                padding:12px 18px;
+                border-radius:12px;
+                cursor:pointer;
+                font-weight:600;
+                ">
+                🚐 Guia Motorista
+                </button>
+
+            </div>
+
+        </div>
+
+        <div
+        id="cidade-${data.replaceAll('-','')}-${cidade}"
+        style="
+        display:none;
+        margin-top:20px;
+        ">
+
+        `;
+
+        cidadesAgrupadas[cidade].forEach(item=>{
 
             conteudoPacientes += `
 
-<div style="
-background:#ffffff;
-color:#111;
-padding:18px;
-border-radius:16px;
-margin-top:20px;
-margin-bottom:15px;
-border:2px solid #e5e7eb;
-box-shadow:0 4px 10px rgba(0,0,0,0.05);
-">
-<div
-onclick="toggleData('cidade-${data.replaceAll('-','')}-${cidade}')"
-style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-flex-wrap:wrap;
-gap:15px;
-cursor:pointer;
-">
+            <div class="item" style="
+            background:#f8fafc;
+            border-left:5px solid #1f8bff;
+            margin-top:15px;
+            ">
 
-<div>
+                <div class="item-topo">
 
-<h2>📁 ${cidade}</h2>
+                    <div>
 
-<p>
+                        <div class="horario">
+                        ${item.horario.slice(0,5)}
+                        </div>
 
-${cidadesAgrupadas[cidade].length} pacientes
+                        <div class="paciente">
+                        ${item.paciente}
+                        </div>
 
-<br>
+                    </div>
 
-${cidadesAgrupadas[cidade].filter(p =>
-p.acompanhante && p.acompanhante.trim() !== ''
-).length} acompanhantes
+                    <div>
 
-<br><br>
+                        <strong>${item.cidade}</strong>
 
-<strong>
+                    </div>
 
-${
-cidadesAgrupadas[cidade].length +
+                </div>
 
-cidadesAgrupadas[cidade].filter(p =>
-p.acompanhante && p.acompanhante.trim() !== ''
-).length
+                <div class="info">
 
-} pessoas no total
+                    <div>
+                    <strong>CPF/CNS Paciente</strong><br>
+                    ${item.cpf_paciente}
+                    </div>
 
-</strong>
+                    <div>
+                    <strong>Acompanhante</strong><br>
+                    ${item.acompanhante || 'Sem acompanhante'}
+                    </div>
 
-</p>
+                    <div>
+                    <strong>CPF/CNS Acompanhante</strong><br>
+                    ${item.cpf_acompanhante || '-'}
+                    </div>
 
-</div>
+                    <div>
+                    <strong>Procedimento</strong><br>
+                    ${item.procedimento}
+                    </div>
 
-<div style="
-display:flex;
-gap:10px;
-align-items:center;
-flex-wrap:wrap;
-margin-top:10px;
-">
+                    <div>
+                    <strong>Local</strong><br>
+                    ${item.local_atendimento}
+                    </div>
 
-<button
-onclick="event.stopPropagation(); gerarPDFCidade('${data}','${cidade}')"
-style="
-background:#1f8bff;
-color:white;
-border:none;
-padding:12px 18px;
-border-radius:12px;
-cursor:pointer;
-font-weight:600;
-">
+                    <div>
+                    <strong>Telefone</strong><br>
+                    ${item.telefone}
+                    </div>
 
-📄 Gerar PDF
+                    <div>
+                    <strong>Local de Embarque</strong><br>
+                    ${item.embarque || '-'}
+                    </div>
 
-</button>
+                    <div>
+                    <strong>Observações</strong><br>
+                    ${item.observacoes || '-'}
+                    </div>
 
-<button
-onclick="event.stopPropagation(); gerarGuiaMotorista('${data}','${cidade}')"
-style="
-background:#198754;
-color:white;
-border:none;
-padding:12px 18px;
-border-radius:12px;
-cursor:pointer;
-font-weight:600;
-">
+                </div>
 
-🚐 Guia Motorista
+                <div class="botoes">
 
-</button>
+                    ${PERFIL === "admin" ? `
+                    <button
+                    class="btn-editar"
+                    onclick="editarPaciente(${item.id})">
+                    ✏️ Editar
+                    </button>
+                    ` : ''}
 
-</div>
+                    <button
+                    onclick="gerarPDFHospedagem(${item.id})"
+                    style="
+                    background:#6f42c1;
+                    color:white;
+                    ">
+                    🏨 Hospedagem
+                    </button>
 
-</div>
+                    ${PERFIL === "admin" ? `
+                    <button
+                    class="btn-excluir"
+                    onclick="excluirPaciente(${item.id})">
+                    🗑 Excluir
+                    </button>
+                    ` : ''}
 
-<div
-id="cidade-${data.replaceAll('-','')}-${cidade}"
-style="
-display:none;
-margin-top:20px;
-">
+                </div>
 
-`;
+            </div>
 
-cidadesAgrupadas[cidade].forEach(item=>{
+            `;
 
-conteudoPacientes += `
+        });
 
-<div class="item" style="
-background:#f8fafc;
-border-left:5px solid #1f8bff;
-margin-top:15px;
-">
+        conteudoPacientes += `
 
-<div class="item-topo">
+        </div>
 
-<div>
+        </div>
 
-<div class="horario">
-${item.horario.slice(0,5)}
-</div>
+        `;
 
-<div class="paciente">
-${item.paciente}
-</div>
+    });
 
-</div>
-
-<div>
-
-<strong>${item.cidade}</strong>
-
-</div>
-
-</div>
-
-<div class="info">
-
-<div>
-<strong>CPF Paciente</strong><br>
-${item.cpf_paciente}
-</div>
-
-<div>
-<strong>Acompanhante</strong><br>
-${item.acompanhante || 'Sem acompanhante'}
-</div>
-
-<div>
-<strong>CPF Acompanhante</strong><br>
-${item.cpf_acompanhante || '-'}
-</div>
-
-<div>
-<strong>Procedimento</strong><br>
-${item.procedimento}
-</div>
-
-<div>
-<strong>Local</strong><br>
-${item.local_atendimento}
-</div>
-
-<div>
-<strong>Telefone</strong><br>
-${item.telefone}
-</div>
-<div>
-<strong>Local de Embarque</strong><br>
-${item.embarque || '-'}
-</div>
-
-<div>
-<strong>Observações</strong><br>
-${item.observacoes || '-'}
-</div>
-
-<div>
-<strong>Data</strong><br>
-${item.data}
-</div>
-
-</div>
-
-
-<div class="botoes">
-
-${PERFIL === "admin" ? `
-<button
-class="btn-editar"
-onclick="editarPaciente(${item.id})">
-✏️ Editar
-</button>
-` : ''}
-
-<button
-style="
-background:#198754;
-color:white;
-"
-onclick="gerarPDFHospedagem(${item.id})">
-
-🏨 Hospedagem
-
-</button>
-
-${PERFIL === "admin" ? `
-<button
-class="btn-excluir"
-onclick="excluirPaciente(${item.id})">
-🗑 Excluir
-</button>
-` : ''}
-
-</div>
-
-</div>
-
-`;
-
-});
-
-conteudoPacientes += `
-
-</div>
-
-</div>
-
-`;
-
-});
-
-listaDatas.innerHTML += `
-
-<div class="pasta">
-
-<div
-onclick="toggleData('conteudo-${data.replaceAll('-','')}')"
-style="cursor:pointer;">
-
-<h3>📁 ${data}</h3>
-
-<p>
-${pacientes.length} pacientes
-</p>
-
-</div>
-
-<div
-id="conteudo-${data.replaceAll('-','')}"
-style="
-display:none;
-margin-top:20px;
-">
-
-${conteudoPacientes}
-
-</div>
-
-</div>
-
-`;
-
-});
+    return conteudoPacientes;
 
 }
 
