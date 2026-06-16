@@ -754,7 +754,25 @@ margin-left:15px;
                 ">
                 🚐 Guia Motorista
                 </button>
-                <input
+                
+            </div>
+
+        </div>
+
+        <div
+        id="cidade-${data.replaceAll('-','')}-${cidade}"
+        style="
+        display:none;
+        margin-top:20px;
+        ">
+        <div style="
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:15px;
+">
+
+<input
 type="text"
 placeholder="Nome do motorista"
 data-data="${data}"
@@ -765,11 +783,11 @@ style="
 padding:10px;
 border:1px solid #ccc;
 border-radius:10px;
-width:220px;
+width:260px;
 "
 >
 
-       <button
+<button
 onclick="
 event.stopPropagation();
 const campoMotorista = this.previousElementSibling;
@@ -788,18 +806,10 @@ border-radius:10px;
 cursor:pointer;
 font-weight:600;
 ">
-💾 Salvar
+💾 Salvar Motorista
 </button>
-            </div>
 
-        </div>
-
-        <div
-        id="cidade-${data.replaceAll('-','')}-${cidade}"
-        style="
-        display:none;
-        margin-top:20px;
-        ">
+</div>
 
         `;
 
