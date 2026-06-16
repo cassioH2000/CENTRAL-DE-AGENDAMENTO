@@ -688,7 +688,7 @@ font-weight:600;
 color:#198754;
 margin-left:15px;
 ">
-🚐 Motorista: ${localStorage.getItem(`motorista-${data}-${cidade}`) || 'Não informado'}
+🚐 Motorista: ${localStorage.getItem('motorista-' + data + '-' + cidade) || 'Não informado'}
 </span>
 </h2>
 
@@ -758,7 +758,7 @@ margin-left:15px;
 type="text"
 id="motorista-${data.replaceAll('-','')}-${cidade.replaceAll(' ','')}"
 placeholder="Nome do motorista"
-value="${localStorage.getItem(`motorista-${data}-${cidade}`) || ''}"
+value="${localStorage.getItem('motorista-' + data + '-' + cidade) || ''}"
 onclick="event.stopPropagation()"
 style="
 padding:10px;
@@ -771,7 +771,7 @@ width:220px;
 onclick="
 event.stopPropagation();
 localStorage.setItem(
-`motorista-${data}-${cidade}`,
+'motorista-' + data + '-' + cidade,
 document.getElementById('motorista-${data.replaceAll('-','')}-${cidade.replaceAll(' ','')}').value
 );
 carregarAgendamentos();
