@@ -756,8 +756,9 @@ margin-left:15px;
                 </button>
                 <input
 type="text"
-id="motorista-${data.replaceAll('-','')}-${cidade.replaceAll(' ','')}"
 placeholder="Nome do motorista"
+data-data="${data}"
+data-cidade="${cidade}"
 value="${localStorage.getItem('motorista-' + data + '-' + cidade) || ''}"
 onclick="event.stopPropagation()"
 style="
@@ -765,14 +766,16 @@ padding:10px;
 border:1px solid #ccc;
 border-radius:10px;
 width:220px;
-">
+"
+>
 
-<button
+       <button
 onclick="
 event.stopPropagation();
+const campoMotorista = this.previousElementSibling;
 localStorage.setItem(
-'motorista-' + data + '-' + cidade,
-document.getElementById('motorista-${data.replaceAll('-','')}-${cidade.replaceAll(' ','')}').value
+'motorista-' + campoMotorista.dataset.data + '-' + campoMotorista.dataset.cidade,
+campoMotorista.value
 );
 carregarAgendamentos();
 "
