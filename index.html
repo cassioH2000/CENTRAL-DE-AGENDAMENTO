@@ -680,7 +680,17 @@ function montarConteudoData(data, pacientes){
 
             <div>
 
-                <h2>📁 ${cidade}</h2>
+               <h2>
+📁 ${cidade}
+<span style="
+font-size:16px;
+font-weight:600;
+color:#198754;
+margin-left:15px;
+">
+🚐 Motorista: ${localStorage.getItem(`motorista-${data}-${cidade}`) || 'Não informado'}
+</span>
+</h2>
 
                 <p>
 
@@ -744,7 +754,39 @@ function montarConteudoData(data, pacientes){
                 ">
                 🚐 Guia Motorista
                 </button>
+                <input
+type="text"
+id="motorista-${data.replaceAll('-','')}-${cidade.replaceAll(' ','')}"
+placeholder="Nome do motorista"
+value="${localStorage.getItem(`motorista-${data}-${cidade}`) || ''}"
+onclick="event.stopPropagation()"
+style="
+padding:10px;
+border:1px solid #ccc;
+border-radius:10px;
+width:220px;
+">
 
+<button
+onclick="
+event.stopPropagation();
+localStorage.setItem(
+`motorista-${data}-${cidade}`,
+document.getElementById('motorista-${data.replaceAll('-','')}-${cidade.replaceAll(' ','')}').value
+);
+carregarAgendamentos();
+"
+style="
+background:#198754;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+">
+💾 Salvar
+</button>
             </div>
 
         </div>
