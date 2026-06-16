@@ -442,6 +442,9 @@ async function carregarAgendamentos(){
     }
 
     const { data:agendamentos, error } = await query;
+     const { data: motoristas } = await supabaseClient
+.from('motoristas_viagem')
+.select('*');
 
     if(error){
 
@@ -496,11 +499,12 @@ async function carregarAgendamentos(){
     .sort((a,b)=> new Date(a) - new Date(b))
     .forEach(data=>{
 
-        montarData(
-            data,
-            agrupados[data],
-            listaDatas
-        );
+       montarData(
+    data,
+    agrupados[data],
+    listaDatas,
+    motoristas
+);
 
     });
 
@@ -599,7 +603,7 @@ async function carregarAgendamentos(){
     }
 
 }
-    function montarData(data, pacientes, listaDatas){
+   function montarData(data, pacientes, listaDatas, motoristas){
 
     listaDatas.innerHTML += `
 
@@ -624,7 +628,7 @@ async function carregarAgendamentos(){
         margin-top:20px;
         ">
 
-            ${montarConteudoData(data, pacientes)}
+           ${montarConteudoData(data, pacientes, motoristas)}
 
         </div>
 
@@ -634,7 +638,7 @@ async function carregarAgendamentos(){
 
 }
 
-function montarConteudoData(data, pacientes){
+function montarConteudoData(data, pacientes, motoristas){
 
     const cidadesAgrupadas = {};
 
@@ -653,6 +657,12 @@ function montarConteudoData(data, pacientes){
     let conteudoPacientes = '';
 
     Object.keys(cidadesAgrupadas).forEach(cidade=>{
+        const motoristaViagem = motoristas.find(
+    m => m.data === data && m.cidade === cidade
+);
+
+const nomeMotorista =
+    motoristaViagem?.motorista || 'Não informado';
 
         conteudoPacientes += `
 
@@ -688,7 +698,7 @@ font-weight:600;
 color:#198754;
 margin-left:15px;
 ">
-🚐 Motorista: ${localStorage.getItem('motorista-' + data + '-' + cidade) || 'Não informado'}
+🚐 Motorista: ${nomeMotorista}
 </span>
 </h2>
 
@@ -777,7 +787,7 @@ type="text"
 placeholder="Nome do motorista"
 data-data="${data}"
 data-cidade="${cidade}"
-value="${localStorage.getItem('motorista-' + data + '-' + cidade) || ''}"
+value="${nomeMotorista === 'Não informado' ? '' : nomeMotorista}"
 onclick="event.stopPropagation()"
 style="
 padding:10px;
@@ -791,11 +801,11 @@ width:260px;
 onclick="
 event.stopPropagation();
 const campoMotorista = this.previousElementSibling;
-localStorage.setItem(
-'motorista-' + campoMotorista.dataset.data + '-' + campoMotorista.dataset.cidade,
-campoMotorista.value
+salvarMotorista(
+campoMotorista.dataset.data,
+campoMotorista.dataset.cidade,
+campoMotorista.value.toUpperCase()
 );
-carregarAgendamentos();
 "
 style="
 background:#198754;
@@ -1309,6 +1319,44 @@ doc.text(
 
     link.click();
 
+}
+    async function salvarMotorista(data, cidade, motorista) {
+       console.log(
+    'SALVANDO:',
+    data,
+    cidade,
+    motorista
+);
+
+    const { data: existe } = await supabaseClient
+        .from('motoristas_viagem')
+        .select('id')
+        .eq('data', data)
+        .eq('cidade', cidade)
+        .maybeSingle();
+
+    if (existe) {
+
+        await supabaseClient
+            .from('motoristas_viagem')
+            .update({
+                motorista
+            })
+            .eq('id', existe.id);
+
+    } else {
+
+        await supabaseClient
+            .from('motoristas_viagem')
+            .insert([{
+                data: data,
+                cidade,
+                motorista
+            }]);
+
+    }
+
+    carregarAgendamentos();
 }
 carregarAgendamentos();
 
