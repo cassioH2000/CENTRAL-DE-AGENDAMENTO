@@ -426,32 +426,65 @@ async function carregarAgendamentos(){
     const filtroPaciente =
     document.getElementById('filtroPaciente').value;
 
+    let agendamentos = [];
+let inicio = 0;
+const quantidadePorPagina = 1000;
+let continuarBuscando = true;
+let error = null;
+
+while (continuarBuscando) {
+
     let query = supabaseClient
-    .from('agendamentos')
-    .select('*')
-    .order('data',{ascending:true})
-    .order('horario',{ascending:true});
+        .from('agendamentos')
+        .select('*')
+        .order('data', { ascending: true })
+        .order('horario', { ascending: true })
+        .range(
+            inicio,
+            inicio + quantidadePorPagina - 1
+        );
 
-    if(filtroPaciente){
-
+    if (filtroPaciente) {
         query = query.ilike(
             'paciente',
             `%${filtroPaciente}%`
         );
-
     }
 
-    const { data:agendamentos, error } = await query;
+    const {
+        data: resultado,
+        error: erroConsulta
+    } = await query;
+
+    if (erroConsulta) {
+        error = erroConsulta;
+        break;
+    }
+
+    agendamentos.push(...resultado);
+
+    if (resultado.length < quantidadePorPagina) {
+        continuarBuscando = false;
+    } else {
+        inicio += quantidadePorPagina;
+    }
+}
      const { data: motoristas } = await supabaseClient
 .from('motoristas_viagem')
 .select('*');
 
-    if(error){
+   if(error){
 
-        console.log(error);
-        return;
+    console.error("Erro ao carregar agendamentos:", error);
 
-    }
+    alert(
+        "Erro ao carregar os agendamentos. " +
+        (error.message || "Verifique a conexão com o banco.")
+    );
+
+    return;
+
+}
 
     const listaDatas =
     document.getElementById('listaDatas');
