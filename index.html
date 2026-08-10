@@ -786,6 +786,20 @@ margin-left:15px;
                 </button>
 
                 <button
+onclick="event.stopPropagation(); gerarHospedagensViagem('${data}','${cidade}')"
+style="
+background:#6f42c1;
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
+">
+🏨 Hospedagens
+</button>
+
+                <button
                 onclick="event.stopPropagation(); gerarGuiaMotorista('${data}','${cidade}')"
                 style="
                 background:#198754;
@@ -1391,6 +1405,291 @@ doc.text(
     }
 
     carregarAgendamentos();
+}
+    async function gerarHospedagensViagem(data, cidade){
+
+    const { data: agendamentos, error } = await supabaseClient
+    .from('agendamentos')
+    .select('*')
+    .eq('data', data)
+    .eq('cidade', cidade)
+    .order('horario', { ascending:true });
+
+    if(error){
+
+        console.error(error);
+        alert("Erro ao gerar hospedagens.");
+        return;
+
+    }
+
+    if(!agendamentos || agendamentos.length === 0){
+
+        alert("Não existem pacientes nesta viagem.");
+        return;
+
+    }
+
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true
+    });
+
+    agendamentos.forEach((item, index) => {
+
+        // 2 hospedagens por folha
+        const posicaoNaFolha = index % 2;
+
+        // Cria nova página a cada 2 pacientes
+        if(index > 0 && posicaoNaFolha === 0){
+            doc.addPage();
+        }
+
+        // Primeira ficha começa em cima
+        // Segunda ficha começa na metade da página
+        const inicioY = posicaoNaFolha === 0 ? 8 : 151;
+
+        // LINHA DIVISÓRIA ENTRE AS DUAS HOSPEDAGENS
+        if(posicaoNaFolha === 1){
+
+            doc.setDrawColor(180);
+            doc.setLineDashPattern([3, 2], 0);
+            doc.line(10, 148, 200, 148);
+            doc.setLineDashPattern([], 0);
+
+        }
+
+        // LOGOS
+        if(logo1.complete){
+            doc.addImage(
+                logo1,
+                'PNG',
+                10,
+                inicioY,
+                32,
+                15
+            );
+        }
+
+        if(logo2.complete){
+            doc.addImage(
+                logo2,
+                'PNG',
+                168,
+                inicioY,
+                32,
+                15
+            );
+        }
+
+        // CABEÇALHO
+        doc.setFontSize(13);
+        doc.setTextColor(25,135,84);
+        doc.setFont(undefined, 'bold');
+
+        doc.text(
+            "SECRETARIA MUNICIPAL DE SAÚDE",
+            105,
+            inicioY + 8,
+            { align:'center' }
+        );
+
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(90);
+
+        doc.text(
+            "Transportando vidas com responsabilidade",
+            105,
+            inicioY + 14,
+            { align:'center' }
+        );
+
+        doc.setDrawColor(200);
+
+        doc.line(
+            10,
+            inicioY + 20,
+            200,
+            inicioY + 20
+        );
+
+        // TÍTULO
+        doc.setTextColor(0);
+        doc.setFontSize(15);
+        doc.setFont(undefined, 'bold');
+
+        doc.text(
+            "HOSPEDAGEM",
+            105,
+            inicioY + 29,
+            { align:'center' }
+        );
+
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(9);
+
+        let y = inicioY + 39;
+
+        // DADOS
+        doc.setFont(undefined, 'bold');
+        doc.text("Paciente:", 12, y);
+
+        doc.setFont(undefined, 'normal');
+        doc.text(
+            item.paciente || '-',
+            35,
+            y
+        );
+
+        y += 8;
+
+        doc.setFont(undefined, 'bold');
+        doc.text("CPF/CNS:", 12, y);
+
+        doc.setFont(undefined, 'normal');
+        doc.text(
+            item.cpf_paciente || '-',
+            35,
+            y
+        );
+
+        y += 8;
+
+        doc.setFont(undefined, 'bold');
+        doc.text("Telefone:", 12, y);
+
+        doc.setFont(undefined, 'normal');
+        doc.text(
+            item.telefone || '-',
+            35,
+            y
+        );
+
+        y += 8;
+
+        doc.setFont(undefined, 'bold');
+        doc.text("Acompanhante:", 12, y);
+
+        doc.setFont(undefined, 'normal');
+
+        doc.text(
+            item.acompanhante || 'Sem acompanhante',
+            42,
+            y
+        );
+
+        y += 8;
+
+        doc.setFont(undefined, 'bold');
+        doc.text("CPF/CNS Acompanhante:", 12, y);
+
+        doc.setFont(undefined, 'normal');
+
+        doc.text(
+            item.cpf_acompanhante || '-',
+            60,
+            y
+        );
+
+        y += 8;
+
+        doc.setFont(undefined, 'bold');
+        doc.text("Destino:", 12, y);
+
+        doc.setFont(undefined, 'normal');
+
+        doc.text(
+            cidade || '-',
+            30,
+            y
+        );
+
+        y += 8;
+
+        doc.setFont(undefined, 'bold');
+        doc.text("Observações:", 12, y);
+
+        doc.setFont(undefined, 'normal');
+
+        const observacao = doc.splitTextToSize(
+            item.observacoes || '-',
+            150
+        );
+
+        doc.text(
+            observacao,
+            38,
+            y
+        );
+
+        // DATA DE CHEGADA / SAÍDA
+
+        const linhaY = inicioY + 111;
+
+        doc.setDrawColor(80);
+
+        doc.line(
+            15,
+            linhaY,
+            90,
+            linhaY
+        );
+
+        doc.line(
+            120,
+            linhaY,
+            195,
+            linhaY
+        );
+
+        doc.setFontSize(8);
+
+        doc.text(
+            "Data de Chegada",
+            52,
+            linhaY + 5,
+            { align:'center' }
+        );
+
+        doc.text(
+            "Data de Saída",
+            157,
+            linhaY + 5,
+            { align:'center' }
+        );
+
+        // ASSINATURA
+
+        const assinaturaY = inicioY + 129;
+
+        doc.line(
+            50,
+            assinaturaY,
+            160,
+            assinaturaY
+        );
+
+        doc.text(
+            "Assinatura do Paciente / Acompanhante",
+            105,
+            assinaturaY + 5,
+            { align:'center' }
+        );
+
+    });
+
+    const cidadeArquivo =
+        cidade.replace(/[^\w]/g, '-');
+
+    doc.save(
+        `Hospedagens-${cidadeArquivo}-${data}.pdf`
+    );
+
 }
 carregarAgendamentos();
 
